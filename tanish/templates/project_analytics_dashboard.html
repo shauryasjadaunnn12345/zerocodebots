@@ -1,0 +1,539 @@
+{% extends "home.html" %}
+{% load static %}
+{% block title %}Project Analytics — {{ project.name }}{% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/project-analytics-dashboard.css' %}">
+{% endblock style %}
+
+{% block body %}
+<main class="dashboard-wrap" aria-label="Analytics dashboard">
+
+  <!-- HEADER -->
+  <header style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
+    <h1 style="margin:0;font-size:1.5rem">Analytics — {{ project.name }}</h1>
+    <div class="actions">
+      <button class="btn btn-icon refresh-btn" id="refreshData" title="Refresh data">
+        <svg class="icon" viewBox="0 0 24 24">
+          <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+        </svg>
+      </button>
+      <button class="btn btn-secondary" id="dateRangeBtn">
+        <svg class="icon" viewBox="0 0 24 24">
+          <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+        </svg>
+        Date Range
+      </button>
+      <a class="btn btn-primary" href="{% url 'export_analytics' project.id %}">
+        <svg class="icon" viewBox="0 0 24 24">
+          <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+        </svg>
+        Download CSV
+      </a>
+    </div>
+  </header>
+
+  <!-- DATE RANGE FILTER -->
+  <div class="filter-container" id="dateRangeFilter" style="display:none;">
+    <select class="filter-select" id="dateRangeSelect">
+      <option value="7">Last 7 days</option>
+      <option value="30" selected>Last 30 days</option>
+      <option value="90">Last 90 days</option>
+      <option value="365">Last year</option>
+      <option value="custom">Custom range</option>
+    </select>
+    <div id="customDateRange" style="display:none; gap:0.5rem; display:flex;">
+      <input type="date" class="filter-select" id="startDate">
+      <span>to</span>
+      <input type="date" class="filter-select" id="endDate">
+    </div>
+    <button class="btn btn-primary" id="applyDateFilter">Apply</button>
+  </div>
+
+  <!-- SUMMARY -->
+  <section aria-label="Summary metrics">
+    <div class="summary-grid">
+
+      <div class="card tooltip">
+        <div class="card-title">
+          Responses
+          <svg class="icon" style="width:16px;height:16px;color:var(--text-light)" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+          </svg>
+        </div>
+        <div class="card-value">{{ summary.responses_count|default:0 }}</div>
+        <div class="muted">Last 30 days</div>
+        <span class="tooltiptext">Total number of user responses received in the selected time period.</span>
+      </div>
+
+      <div class="card tooltip">
+        <div class="card-title">
+          Avg confidence
+          <svg class="icon" style="width:16px;height:16px;color:var(--text-light)" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+          </svg>
+        </div>
+        {% with c=summary.avg_confidence %}
+          {% if c %}
+            {% if c > 0.7 %}
+              <div class="card-value metric-positive">{{ c|floatformat:2 }}</div>
+            {% elif c > 0.4 %}
+              <div class="card-value metric-warning">{{ c|floatformat:2 }}</div>
+            {% else %}
+              <div class="card-value metric-negative">{{ c|floatformat:2 }}</div>
+            {% endif %}
+            <div class="muted">Average confidence</div>
+          {% else %}
+            <div class="card-value">—</div>
+            <div class="muted">No confidence data</div>
+          {% endif %}
+        {% endwith %}
+        <span class="tooltiptext">Average confidence score of the AI responses. Higher is better.</span>
+      </div>
+
+      <div class="card tooltip">
+        <div class="card-title">
+          Feedback
+          <svg class="icon" style="width:16px;height:16px;color:var(--text-light)" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+          </svg>
+        </div>
+        <div class="card-value">{{ summary.feedback_count|default:0 }}</div>
+        <div class="muted">Total feedback received</div>
+        <span class="tooltiptext">Total number of feedback submissions from users.</span>
+      </div>
+
+      <div class="card tooltip">
+        <div class="card-title">
+          Avg rating
+          <svg class="icon" style="width:16px;height:16px;color:var(--text-light)" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+          </svg>
+        </div>
+        {% with r=summary.avg_rating %}
+          {% if r %}
+            <div class="card-value">{{ r|floatformat:1 }}</div>
+            {% widthratio r 5 100 as rating_pct %}
+            <div class="progress">
+              <div class="progress-inner" style="width: {{ rating_pct }}%"></div>
+            </div>
+            <div class="muted">{{ rating_pct }}% satisfaction</div>
+          {% else %}
+            <div class="card-value">—</div>
+            <div class="muted">No ratings yet</div>
+          {% endif %}
+        {% endwith %}
+        <span class="tooltiptext">Average user rating on a scale of 1-5.</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- INTENT BREAKDOWN -->
+  <section aria-label="Intent breakdown">
+    <h2 class="collapsible" data-target="intentBreakdown">
+      Intent breakdown
+      <button class="sort-btn" id="sortIntents">
+        Sort by <span id="sortIntentsText">count</span>
+        <svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24">
+          <path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/>
+        </svg>
+      </button>
+    </h2>
+
+    <div class="collapsible-content" id="intentBreakdown">
+      {% if intent_breakdown %}
+        {% with top_intent=intent_breakdown.0.intent %}
+          <p class="muted">Most common intent: <strong>{{ top_intent }}</strong></p>
+        {% endwith %}
+
+        <div class="card">
+          {% for i in intent_breakdown %}
+            {% widthratio i.count summary.responses_count 100 as pct %}
+            <div class="{% if forloop.first %}highlight{% endif %}" style="margin-bottom:0.75rem" data-intent="{{ i.intent }}" data-count="{{ i.count }}">
+              <strong>{{ i.intent }}</strong> ({{ i.count }})
+              <div class="bar">
+                <div class="bar-inner" style="width: {{ pct }}%"></div>
+              </div>
+              <div class="muted">{{ pct }}% of responses</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty">No intent data available yet.</div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- TOP QUESTIONS -->
+  <section aria-label="Top questions">
+    <h2 class="collapsible" data-target="topQuestions">
+      Top questions
+      <button class="sort-btn" id="sortQuestions">
+        Sort by <span id="sortQuestionsText">frequency</span>
+        <svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24">
+          <path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/>
+        </svg>
+      </button>
+    </h2>
+
+    <div class="collapsible-content" id="topQuestions">
+      {% if top_questions %}
+        <div class="card">
+          <ol>
+            {% for q in top_questions|slice:":5" %}
+              {% widthratio q.count summary.responses_count 100 as pct %}
+              <li style="margin-bottom:0.75rem" data-question="{{ q.question }}" data-count="{{ q.count }}">
+                <div class="tooltip" style="width:100%">
+                  {{ q.question|truncatewords:8 }}
+                  <span class="tooltiptext">{{ q.question }}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:0.5rem">
+                  <span style="font-size:0.8rem;color:var(--text-light)">({{ q.count }})</span>
+                  <div class="progress" style="flex-grow:1">
+                    <div class="progress-inner" style="width: {{ pct }}%; background:var(--primary-color)"></div>
+                  </div>
+                </div>
+              </li>
+            {% endfor %}
+          </ol>
+          <p class="muted">High-frequency questions highlight content gaps.</p>
+        </div>
+      {% else %}
+        <div class="empty">No questions recorded yet.</div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- ACTIVITY -->
+  <section aria-label="Activity over time">
+    <h2 class="collapsible" data-target="activityChart">
+      Activity — Last 30 days
+      <div class="actions" style="margin:0">
+        <button class="btn btn-secondary btn-icon" id="chartTypeToggle" title="Toggle chart type">
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/>
+          </svg>
+        </button>
+      </div>
+    </h2>
+
+    <div class="collapsible-content" id="activityChart">
+      {% if timeseries %}
+        <div class="card" style="max-height:260px; overflow:hidden;">
+          <div style="height:160px;">
+            <canvas id="eventsChart"></canvas>
+          </div>
+          <div style="display:flex;justify-content:center;margin-top:1rem;gap:1rem">
+            <button class="btn btn-secondary btn-sm" id="zoomIn">Zoom In</button>
+            <button class="btn btn-secondary btn-sm" id="zoomOut">Zoom Out</button>
+            <button class="btn btn-secondary btn-sm" id="resetZoom">Reset</button>
+          </div>
+        </div>
+      {% else %}
+        <div class="empty">No activity recorded yet.</div>
+      {% endif %}
+    </div>
+  </section>
+
+</main>
+
+  
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
+<script>
+(function () {
+  // Initialize variables
+  let chart;
+  let chartType = 'line';
+  let intentsSortBy = 'count';
+  let questionsSortBy = 'frequency';
+  
+  // Date range functionality
+  const dateRangeBtn = document.getElementById('dateRangeBtn');
+  const dateRangeFilter = document.getElementById('dateRangeFilter');
+  const dateRangeSelect = document.getElementById('dateRangeSelect');
+  const customDateRange = document.getElementById('customDateRange');
+  const applyDateFilter = document.getElementById('applyDateFilter');
+  
+  dateRangeBtn.addEventListener('click', function() {
+    dateRangeFilter.style.display = dateRangeFilter.style.display === 'none' ? 'flex' : 'none';
+  });
+  
+  dateRangeSelect.addEventListener('change', function() {
+    if (this.value === 'custom') {
+      customDateRange.style.display = 'flex';
+    } else {
+      customDateRange.style.display = 'none';
+    }
+  });
+  
+  applyDateFilter.addEventListener('click', function() {
+    // In a real implementation, this would trigger a data refresh with the selected date range
+    const dateRange = dateRangeSelect.value;
+    let startDate, endDate;
+    
+    if (dateRange === 'custom') {
+      startDate = document.getElementById('startDate').value;
+      endDate = document.getElementById('endDate').value;
+    } else {
+      // Calculate date range based on selection
+      endDate = new Date();
+      startDate = new Date();
+      startDate.setDate(startDate.getDate() - parseInt(dateRange));
+    }
+    
+    // Show loading state
+    this.innerHTML = '<span class="loading"></span> Applying...';
+    this.disabled = true;
+    
+    // Simulate API call
+    setTimeout(() => {
+      this.innerHTML = 'Apply';
+      this.disabled = false;
+      dateRangeFilter.style.display = 'none';
+      
+      // Show notification
+      showNotification('Date filter applied successfully');
+    }, 1000);
+  });
+  
+  // Refresh data functionality
+  const refreshBtn = document.getElementById('refreshData');
+  refreshBtn.addEventListener('click', function() {
+    const originalContent = this.innerHTML;
+    this.innerHTML = '<span class="loading"></span>';
+    
+    // Simulate data refresh
+    setTimeout(() => {
+      this.innerHTML = originalContent;
+      showNotification('Data refreshed successfully');
+      
+      // Animate progress bars
+      document.querySelectorAll('.progress-inner, .bar-inner').forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(() => {
+          bar.style.width = width;
+        }, 100);
+      });
+    }, 1500);
+  });
+  
+  // Collapsible sections
+  document.querySelectorAll('.collapsible').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const content = document.getElementById(targetId);
+      
+      this.classList.toggle('collapsed');
+      
+      if (content.style.maxHeight) {
+        content.style.maxHeight = null;
+      } else {
+        content.style.maxHeight = content.scrollHeight + "px";
+      }
+    });
+  });
+  
+  // Initialize all collapsible sections as expanded
+  document.querySelectorAll('.collapsible-content').forEach(content => {
+    content.style.maxHeight = content.scrollHeight + "px";
+  });
+  
+  // Sorting functionality for intents
+  const sortIntentsBtn = document.getElementById('sortIntents');
+  const sortIntentsText = document.getElementById('sortIntentsText');
+  const intentBreakdown = document.getElementById('intentBreakdown');
+  
+  sortIntentsBtn.addEventListener('click', function() {
+    intentsSortBy = intentsSortBy === 'count' ? 'alphabetical' : 'count';
+    sortIntentsText.textContent = intentsSortBy;
+    
+    // Get all intent elements
+    const intentElements = Array.from(intentBreakdown.querySelectorAll('[data-intent]'));
+    
+    // Sort based on current criteria
+    if (intentsSortBy === 'alphabetical') {
+      intentElements.sort((a, b) => {
+        return a.dataset.intent.localeCompare(b.dataset.intent);
+      });
+    } else {
+      intentElements.sort((a, b) => {
+        return parseInt(b.dataset.count) - parseInt(a.dataset.count);
+      });
+    }
+    
+    // Re-append in sorted order
+    const container = intentElements[0].parentNode;
+    intentElements.forEach(el => container.appendChild(el));
+  });
+  
+  // Sorting functionality for questions
+  const sortQuestionsBtn = document.getElementById('sortQuestions');
+  const sortQuestionsText = document.getElementById('sortQuestionsText');
+  const topQuestions = document.getElementById('topQuestions');
+  
+  sortQuestionsBtn.addEventListener('click', function() {
+    questionsSortBy = questionsSortBy === 'frequency' ? 'alphabetical' : 'frequency';
+    sortQuestionsText.textContent = questionsSortBy;
+    
+    // Get all question elements
+    const questionElements = Array.from(topQuestions.querySelectorAll('[data-question]'));
+    
+    // Sort based on current criteria
+    if (questionsSortBy === 'alphabetical') {
+      questionElements.sort((a, b) => {
+        return a.dataset.question.localeCompare(b.dataset.question);
+      });
+    } else {
+      questionElements.sort((a, b) => {
+        return parseInt(b.dataset.count) - parseInt(a.dataset.count);
+      });
+    }
+    
+    // Re-append in sorted order
+    const container = questionElements[0].parentNode;
+    questionElements.forEach(el => container.appendChild(el));
+  });
+  
+  // Chart functionality
+  const labels = {{ chart_labels_json|default:"[]"|safe }};
+  const values = {{ chart_values_json|default:"[]"|safe }};
+  
+  if (labels.length) {
+      const canvasEl = document.getElementById('eventsChart');
+      const ctx = canvasEl.getContext('2d');
+
+    chart = new Chart(ctx, {
+      type: chartType,
+      data: {
+        labels: labels,
+        datasets: [{
+          data: values,
+          label: "Events",
+          borderColor: "#3b82f6",
+          backgroundColor: "rgba(59,130,246,0.08)",
+          fill: true,
+          tension: 0.25,
+          pointRadius: 0,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        elements: {
+          point: { radius: 0 }
+        },
+        scales: {
+          y: { 
+            beginAtZero: true,
+            grid: { color: 'rgba(0,0,0,0.05)' }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { maxTicksLimit: 12 }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          zoom: {
+            zoom: { wheel: { enabled: false }, pinch: { enabled: false }, mode: 'x' },
+            pan: { enabled: true, mode: 'x' }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            titleFont: { size: 14 },
+            bodyFont: { size: 13 },
+            padding: 8,
+            cornerRadius: 6
+          }
+        },
+        interaction: { intersect: false, mode: 'index' }
+      }
+    });
+    
+    // Chart type toggle
+    document.getElementById('chartTypeToggle').addEventListener('click', function() {
+      chartType = chartType === 'line' ? 'bar' : 'line';
+      chart.config.type = chartType;
+      
+      if (chartType === 'bar') {
+        chart.config.data.datasets[0].backgroundColor = 'rgba(59,130,246,0.6)';
+        chart.config.data.datasets[0].borderColor = 'rgba(59,130,246,1)';
+      } else {
+        chart.config.data.datasets[0].backgroundColor = 'rgba(59,130,246,0.1)';
+        chart.config.data.datasets[0].borderColor = '#3b82f6';
+      }
+      
+      chart.update();
+    });
+    
+    // Zoom controls
+    document.getElementById('zoomIn').addEventListener('click', function() {
+      chart.zoom(1.1);
+    });
+    
+    document.getElementById('zoomOut').addEventListener('click', function() {
+      chart.zoom(0.9);
+    });
+    
+    document.getElementById('resetZoom').addEventListener('click', function() {
+      chart.resetZoom();
+    });
+  }
+  
+  // Notification helper
+  function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #333;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+      notification.style.transform = 'translateY(0)';
+      notification.style.opacity = '1';
+    }, 10);
+    
+    // Animate out and remove
+    setTimeout(() => {
+      notification.style.transform = 'translateY(100px)';
+      notification.style.opacity = '0';
+      setTimeout(() => {
+        document.body.removeChild(notification);
+      }, 300);
+    }, 3000);
+  }
+  
+  // Animate progress bars on load
+  window.addEventListener('load', function() {
+    document.querySelectorAll('.progress-inner, .bar-inner').forEach(bar => {
+      const width = bar.style.width;
+      bar.style.width = '0%';
+      setTimeout(() => {
+        bar.style.width = width;
+      }, 100);
+    });
+  });
+})();
+</script>
+{% endblock body %}

@@ -1,0 +1,103 @@
+body {
+  background: #f9f9f9;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.page-title {
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.chat-container {
+  max-width: 520px;
+  margin: auto;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  height: 35vh;
+  overflow-y: auto;
+}
+
+.chat-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-bubble {
+  max-width: 80%;
+  padding: .7rem 1rem;
+  border-radius: 10px;
+  margin: .4rem 0;
+  word-wrap: break-word;
+}
+
+.user {
+  background: #2563eb;
+  color: #fff;
+  align-self: flex-end;
+}
+
+.bot {
+  background: #e5e7eb;
+  color: #111;
+  align-self: flex-start;
+}
+
+form {
+  display: flex;
+  gap: .5rem;
+  margin: 1rem auto;
+  max-width: 520px;
+}
+
+input {
+  flex: 1;
+  padding: .7rem;
+}
+
+button {
+  padding: .7rem 1.2rem;
+  border-radius: 6px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+}
+
+.mic-button {
+  background: #f3f4f6;
+  color: #111;
+}
+
+.mic-button.active {
+  background: #ef4444;
+  color: #fff;
+}
+/* Bot typing indicator */
+.typing {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  background: #e5e7eb;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  width: fit-content;
+}
+
+.typing span {
+  width: 6px;
+  height: 6px;
+  background: #555;
+  border-radius: 50%;
+  animation: blink 1.4s infinite both;
+}
+
+.typing span:nth-child(2) { animation-delay: .2s; }
+.typing span:nth-child(3) { animation-delay: .4s; }
+
+@keyframes blink {
+  0% { opacity: .2; }
+  20% { opacity: 1; }
+  100% { opacity: .2; }
+}

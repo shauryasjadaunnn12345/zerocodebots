@@ -1,0 +1,549 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}ZeroCodeBots – No-Code AI Chatbots for Your Website — With Powerful Analytics
+{% endblock title %}</title>
+
+  <!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+  rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+  onload="this.onload=null;this.rel='stylesheet'">
+
+<noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap">
+</noscript>
+
+  
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  crossorigin="anonymous">
+  
+  <link rel="canonical" href="https://zerocodebots.com/">
+  
+  <link rel="preload" href="{% static 'css/fontawesome.min.css' %}" as="style" onload="this.onload=null;this.rel='stylesheet'"> <noscript> <link rel="stylesheet" href="{% static 'css/fontawesome.min.css' %}"> </noscript>
+  
+  
+  <!-- Basic SEO -->
+  <meta name="description" content="ZeroCodeBots lets you integrate AI chatbots into your website and track detailed chatbot analytics—helping you understand user conversations, engagement, and performance in one simple dashboard.">
+  <meta name="author" content="ZeroCodeBots Team">
+  <meta property="og:site_name" content="ZeroCodeBots">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="ZeroCodeBots - Build Bots, Apps & Automation Without Code">
+  <meta property="og:description" content="Create powerful bots, applications, and automation workflows without writing a single line of code. Perfect for students, startups, and businesses.">
+  <meta name="keywords" content="AI chatbot, website chatbot, chatbot analytics, AI chatbot analytics, embed chatbot, website AI assistant, chatbot conversation tracking, user interaction analytics, no code chatbot, chatbot dashboard">
+  
+  <meta property="og:image" content="https://freeimage.host/i/fklbSwl">
+  <meta name="robots" content="index, follow">
+  
+  <link rel="icon" href="{% static '\favicon-256x256.png' %}" type="image/x-icon">
+  
+  <meta property="og:url" content="https://zerocodebots.com">
+  <meta property="og:type" content="website">
+  
+  <!-- Favicon -->
+  
+  
+  <link rel="preload" href="{% static 'css/main.min.css' %}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="{% static 'css/main.min.css' %}">
+  </noscript>
+  
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "ZeroCodeBots",
+      "url": "https://zerocodebots.com",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "description": "Embed AI chatbots on your website and monitor real-time chatbot analytics. ZeroCodeBots helps you analyze conversations, user behavior, and chatbot effectiveness—without any technical complexity."
+    }
+  </script>
+  {% block breadcrumbs %}
+  
+  
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+  {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://zerocodebots.com/"
+  }
+  ]
+}
+</script>
+{% endblock breadcrumbs %}
+{% block faq %}
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+      {
+      "@type": "Question",
+      "name": "Do I need coding experience to use ZeroCodeBots?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. ZeroCodeBots is a no-code platform. You simply add your own questions and answers, generate a chatbot, and embed it into your website using a ready-made code snippet."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does the chatbot work on my website?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You enter a set of questions and answers in the ZeroCodeBots dashboard. After that, you copy the embed code and place it on your website. The chatbot will appear instantly and respond based on your provided Q&A."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I see chatbot conversations and analytics?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. ZeroCodeBots provides a built-in analytics dashboard where you can view chatbot conversations, user interactions, usage statistics, and engagement insights."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I update my chatbot content after embedding it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. You can update or modify your questions and answers at any time from the dashboard, and the changes will automatically reflect on your website chatbot."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is ZeroCodeBots suitable for students and small websites?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. ZeroCodeBots is designed for students, startups, and small website owners who want a simple way to add a chatbot and track user interactions without technical complexity."
+      }
+    }
+    ]
+  }
+</script>
+
+{% endblock faq %}
+{% block style %}
+<link rel="canonical" href="https://zerocodebots.com/" />
+
+{% endblock style %}
+</head>
+<body>
+  <div id="loader-wrapper"><div id="loader"></div></div>
+  
+  <nav>
+    <div class="container nav-container">
+      <div class="logo">
+        <svg width="120" height="30" viewBox="0 0 520 140" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#06D9D9"/>
+              <stop offset="100%" stop-color="#04A5A5"/>
+            </linearGradient>
+          </defs>
+          <g transform="translate(40,30)">
+            <path
+              d="M30 0 H70 A30 30 0 0 1 70 60 H30 Z"
+              fill="none"
+              stroke="url(#greenGradient)"
+              stroke-width="8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M30 20 H55 A10 10 0 0 1 55 40 H30"
+              fill="none"
+              stroke="url(#greenGradient)"
+              stroke-width="8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </g>
+          <text
+            x="150"
+            y="85"
+            font-family="Segoe UI, Inter, Arial, sans-serif"
+            font-size="56"
+            font-weight="500"
+            fill="#0EA5E9"
+          >
+            ZeroCode
+          </text>
+        </svg>
+      </div>
+<button class="hamburger" aria-label="Open menu" aria-expanded="false">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+<script>
+  // Inline fallback with capturing listener to guard against extension content-scripts
+  (function(){
+    try {
+      const btn = document.querySelector('.hamburger');
+      const nav = document.querySelector('.nav-links');
+      if (!btn || !nav) return;
+
+      function toggle(e){
+        try {
+          e && e.stopPropagation();
+          // prevent other handlers from receiving this click (capture phase)
+          if (e && e.stopImmediatePropagation) e.stopImmediatePropagation();
+          console.log('inline hamburger clicked');
+          nav.classList.toggle('active');
+          btn.classList.toggle('open');
+          const expanded = btn.getAttribute('aria-expanded') === 'true';
+          btn.setAttribute('aria-expanded', String(!expanded));
+        } catch (inner){ console.warn('hambger toggle error', inner); }
+      }
+
+      // Attach direct click handler on the button (normal bubble)
+      btn.addEventListener('click', toggle);
+
+      // Also attach a capturing handler on document so we intercept clicks
+      // before many extensions' bubble handlers run.
+      document.addEventListener('click', function(e){
+        const target = e.target || e.srcElement;
+        if (target && target.closest && target.closest('.hamburger')) {
+          // run our toggle and stop propagation early
+          toggle(e);
+        }
+      }, true); // useCapture = true
+
+    } catch (err) { console.warn('hamburger inline script failed', err); }
+  })();
+</script>
+
+
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/features">Features</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+ 
+  <a href="{% url 'blog_list' %}">Blog</a>
+
+
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+          <i class="fas fa-moon" id="theme-icon" style="color: rgb(126, 140, 163);"></i>
+        </button>
+        {% if user.is_authenticated %}
+          <span style="margin-right:1rem;">Hi, {{ user.username }}</span>
+          {% if user_project %}
+            <a href="{% url 'project_analytics' user_project.pk %}" class="btn btn-primary" style="margin-right:.5rem;color: white;">Analytics</a>
+            <a href="{% url 'edit_project' user_project.pk %}" class="btn btn-outline" style="margin-right:.5rem;">Edit Project</a>
+          {% else %}
+            <a href="{% url 'create_project' %}" class="btn btn-primary" style="margin-right:.5rem;">Create Project</a>
+            <a href="{% url 'my_projects' %}" class="btn btn-outline" style="margin-right:.5rem;">My Projects</a>
+          {% endif %}
+          <a href="{% url 'logout' %}" class="btn btn-outline">Logout</a>
+        {% else %}
+          <a href="{% url 'signup' %}" class="btn btn-primary" aria-label="Get started with ZeroCodeBots for free">Get Started Free</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+ 
+
+<main id="main-content">
+
+{% block body %}
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1>Create Website Chatbots from Your Q&A — With Built-In Analytics</h1>
+
+         <p>
+Create an AI chatbot by adding your own questions and answers. 
+Embed it into your website with a simple code snippet and track all chatbot conversations and user interactions from one analytics dashboard.
+</p>
+
+          <div class="hero-buttons">
+            <a href="{% url 'dashboard' %}" class="btn btn-primary" aria-label="Get started with ZeroCodeBots for free">Get Started Free</a>
+            <a href="#how-it-works" class="btn btn-outline" aria-label="Learn how ZeroCodeBots works">Watch Video Tutorial</a>
+          </div>
+        </div>
+        <div class="hero-image">
+         <picture>
+  <source srcset="{% static 'img/hero.webp' %}" type="image/webp">
+  <img
+    src="{% static 'img/hero.jpg' %}"
+    alt="ZeroCodeBots no-code automation dashboard"
+    width="1170"
+    height="780"
+    fetchpriority="high"
+    loading="eager"
+  >
+</picture>
+
+          <div class="hero-badge">
+            <i class="fas fa-check-circle"></i>
+            <span>No Code Required</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works" id="how-it-works">
+  <div class="container">
+    <div class="section-header">
+      <h2>How ZeroCodeBots Works</h2>
+      <p>Create, embed, and analyze your website chatbot in three simple steps</p>
+    </div>
+
+    <div class="steps-container">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Add Questions & Answers</h3>
+        <p>
+          Enter your custom questions and answers inside the ZeroCodeBots dashboard.
+          These responses define how your chatbot replies to users.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Embed the Chatbot</h3>
+        <p>
+          Copy the generated embed code and paste it into your website’s HTML.
+          The chatbot appears instantly without any coding.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>View Analytics</h3>
+        <p>
+          Track chatbot conversations, messages, and user engagement
+          directly from your analytics dashboard.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- Key Features Section -->
+ <section class="section" id="features">
+  <div class="container">
+    <div class="section-header">
+      <h2>Website Chatbot Features</h2>
+      <p>Everything you need to manage a chatbot on your website</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>Q&A-Based Chatbot</h3>
+        <p>Create chatbots using your own predefined questions and answers.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>Easy Website Integration</h3>
+        <p>Embed the chatbot into your website using a simple copy-paste code.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>Conversation Analytics</h3>
+        <p>View all chatbot conversations and messages in one place.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>User Interaction Insights</h3>
+        <p>Understand what users ask and how often they engage with the chatbot.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>Instant Updates</h3>
+        <p>Edit your questions and answers anytime and update the chatbot instantly.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>No-Code Platform</h3>
+        <p>Designed for students, startups, and non-technical website owners.</p>
+      </div>
+    </div>
+  </div>
+</section>
+  <!-- Integrations Section -->
+  <section class="integrations" id="integrations">
+    <div class="container">
+      <div class="section-header">
+        <h2>Integrates With Your Favorite Tools</h2>
+        <p>Connect seamlessly with the platforms you already use and love</p>
+      </div>
+      <div class="integrations-slider">
+        <div class="integration-logo">Slack</div>
+        <div class="integration-logo">Gmail</div>
+        <div class="integration-logo">Shopify</div>
+        <div class="integration-logo">WhatsApp</div>
+        <div class="integration-logo">HubSpot</div>
+        <div class="integration-logo">Notion</div>
+        <div class="integration-logo">Airtable</div>
+        <div class="integration-logo">Zapier</div>
+        <!-- Duplicate for seamless loop -->
+        <div class="integration-logo">Slack</div>
+        <div class="integration-logo">Gmail</div>
+        <div class="integration-logo">Shopify</div>
+        <div class="integration-logo">WhatsApp</div>
+        <div class="integration-logo">HubSpot</div>
+        <div class="integration-logo">Notion</div>
+        <div class="integration-logo">Airtable</div>
+        <div class="integration-logo">Zapier</div>
+      </div>
+    </div>
+  </section>
+
+  
+
+  <!-- Testimonials Section -->
+  <section class="section testimonials">
+  <div class="container">
+    <div class="section-header">
+      <h2>What Users Say</h2>
+      <p>Trusted by students and website owners</p>
+    </div>
+
+    <div class="testimonial-grid">
+      <div class="testimonial-card">
+        <p>
+          “We added a chatbot to our website in minutes. The analytics dashboard
+          helps us see exactly what users are asking.”
+        </p>
+        <strong>— Priya S.</strong>
+      </div>
+
+      <div class="testimonial-card">
+        <p>
+          “ZeroCodeBots made it easy to create a Q&A chatbot without coding.
+          Updating answers is super simple.”
+        </p>
+        <strong>— Rahul M.</strong>
+      </div>
+
+      <div class="testimonial-card">
+        <p>
+          “The conversation analytics helped us improve our FAQ content
+          based on real user questions.”
+        </p>
+        <strong>— Anjali K.</strong>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section faq-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Frequently Asked Questions</h2>
+      <p>Common questions about ZeroCodeBots</p>
+    </div>
+
+    <div class="faq-grid">
+      <div class="faq-item">
+        <h4>Do I need coding experience?</h4>
+        <p>No. You only add questions and answers and paste an embed code.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>Can I update chatbot answers later?</h4>
+        <p>Yes. Any updates are reflected instantly on your website chatbot.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>Can I see chatbot analytics?</h4>
+        <p>Yes. You can view conversations, messages, and engagement data.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>Who is this platform for?</h4>
+        <p>Students, startups, and anyone who wants a simple website chatbot.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+  {% endblock body %}
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-column">
+          <h3>ZeroCodeBots</h3>
+         <p>
+      ZeroCodeBots is a website chatbot platform that lets you create chatbots
+      using your own questions and answers, embed them into your website,
+      and track conversations with built-in analytics.
+    </p>
+          <div style="margin-top: 1rem;">
+            <a href="https://www.linkedin.com/company/zerocodebots/" style="color: var(--text-secondary); font-size: 1.5rem; margin-right: 1rem;"><i class="fab fa-linkedin"></i></a>
+            <a href="https://github.com/shauryasjadaunnn12345" style="color: var(--text-secondary); font-size: 1.5rem; margin-right: 1rem;"><i class="fab fa-github"></i></a>
+
+            <a href="https://www.instagram.com/zerocodebots/" style="color: var(--text-secondary); font-size: 1.5rem;"><i class="fas fa-envelope"></i></a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="/features">Features</a></li>
+            <li><a href="#integrations">Integrations</a></li>
+  
+            <li><a href="#">Templates</a></li>
+        
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about">About Us</a></li>
+           
+         <li>
+  <a href="{% url 'blog_list' %}">Blog</a>
+</li>
+
+    
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Stay Updated</h4>
+          <p>Get the latest updates and tips delivered to your inbox</p>
+          <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
+            <input type="email" placeholder="Enter your email" required>
+            <button type="submit">Subscribe</button>
+          </form>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© {{ now.year }} ZeroCodeBots. All rights reserved. | <a href="{% url 'privacy_policy' %}" style="color: var(--text-muted);">Privacy Policy</a> | <a href="{% url 'terms_of_service' %}" style="color: var(--text-muted);">Terms of Service</a></p>
+      </div>
+    </div>
+  </footer>
+
+<script src="{% static 'js/home.js' %}" defer></script>
+
+
+<noscript>
+  <p>Please enable JavaScript to use all features of ZeroCodeBots.</p>
+</noscript>
+</body>
+</html>

@@ -1,0 +1,1 @@
+<h2>My Projects</h2><ul>{% for project in projects %}<li><strong>{{ project.title }}</strong> - <a href="{% url 'edit_project' project.pk %}">Edit</a></li>{% empty %}<li>No projects yet.</li>{% endfor %}</ul>

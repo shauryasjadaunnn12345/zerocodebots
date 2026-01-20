@@ -1,0 +1,64 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}Create Project | ZeroCodeBots{% endblock title %}
+
+{% block breadcrumbs %}
+<!-- Breadcrumb Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://zerocodebots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Create Project",
+      "item": "https://zerocodebots.com/create-project/"
+    }
+  ]
+}
+</script>
+
+<!-- Page Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Create Project",
+  "description": "Create and name a new project on ZeroCodeBots to start building no-code bots and automation workflows.",
+  "url": "https://zerocodebots.com/create-project/"
+}
+</script>
+{% endblock breadcrumbs %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/create-projects.css' %}">
+{% endblock style %}
+
+{% block body %}
+<section class="create-project-page">
+  <div class="create-project-container">
+
+    <h2>Name Your Project</h2>
+
+    <form method="post" class="create-project-form" novalidate>
+      {% csrf_token %}
+      {{ form.as_p }}
+
+      <button type="submit" class="create-project-submit">
+        Create Project
+      </button>
+    </form>
+
+  </div>
+</section>
+
+<script src="{% static 'js/create-projects.js' %}" defer></script>
+{% endblock body %}

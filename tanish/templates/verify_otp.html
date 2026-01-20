@@ -1,0 +1,77 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}Verify OTP | ZeroCodeBots{% endblock title %}
+
+{% block breadcrumbs %}
+<!-- Breadcrumb Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://zerocodebots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Forgot Password",
+      "item": "https://zerocodebots.com/forgot-password/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Verify OTP",
+      "item": "https://zerocodebots.com/verify-otp/"
+    }
+  ]
+}
+</script>
+
+<!-- Page Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Verify OTP",
+  "description": "Verify the one-time password sent to your email to reset your ZeroCodeBots account password.",
+  "url": "https://zerocodebots.com/verify-otp/"
+}
+</script>
+{% endblock breadcrumbs %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/verify-otp.css' %}">
+{% endblock style %}
+
+{% block body %}
+<section class="verify-otp-page">
+  <div class="otp-container">
+
+    <h2>Verify OTP</h2>
+    <p class="subtitle">
+      Enter the 6-digit OTP sent to your registered email address.
+    </p>
+
+    <form method="post" aria-label="Verify OTP form">
+      {% csrf_token %}
+      {{ form.as_p }}
+
+      <button type="submit" class="primary-btn">
+        Verify OTP
+      </button>
+    </form>
+
+    <div class="back-link">
+      <a href="{% url 'login' %}">← Back to Login</a>
+    </div>
+
+  </div>
+</section>
+
+<script src="{% static 'js/verify-otp.js' %}" defer></script>
+{% endblock body %}

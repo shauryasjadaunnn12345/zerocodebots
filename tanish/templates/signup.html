@@ -1,0 +1,151 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}Signup | ZeroCodeBots{% endblock %}
+
+{% block breadcrumbs %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://zerocodebots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Signup",
+      "item": "https://zerocodebots.com/signup/"
+    }
+  ]
+}
+</script>
+{% endblock breadcrumbs %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/signup.css' %}">
+<style>.google-auth {
+  margin-top: 1.2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.google-auth-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  width: 100%;
+  max-width: 420px;
+
+  padding: 0.75rem 1rem;
+
+  background-color: #ffffff;
+  color: #262b31ff;
+
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+
+  font-size: 0.95rem;
+  font-weight: 500;
+  font-family: 'Segoe UI', sans-serif;
+
+  text-decoration: none;
+  cursor: pointer;
+
+  transition: 
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.google-auth-btn img {
+  width: 18px;
+  height: 18px;
+}
+
+.google-auth-btn:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.google-auth-btn:active {
+  background-color: #f3f4f6;
+}
+
+.google-auth-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(88, 146, 223, 0.35);
+}
+</style>
+{% endblock style %}
+
+{% block body %}
+<div class="signup-container">
+
+  <h2>Create Your Account</h2>
+
+  <!-- 🔥 FORM ERRORS (IMPORTANT) -->
+  {% if form.errors %}
+    <div class="form-errors">
+      <ul>
+        {% for field in form %}
+          {% for error in field.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label for="{{ form.username.id_for_label }}">Username</label>
+      {{ form.username }}
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.email.id_for_label }}">Email</label>
+      {{ form.email }}
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.password.id_for_label }}">Password</label>
+      {{ form.password }}
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.confirm_password.id_for_label }}">Confirm Password</label>
+      {{ form.confirm_password }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Sign Up</button>
+  </form>
+
+  <div class="auth-links">
+    Already have an account?
+    <a href="{% url 'login' %}">Login</a>
+  </div>
+
+<div class="google-auth">
+  <a href="/accounts/google/login/" class="google-auth-btn">
+    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
+    <span>Continue with Google</span>
+  </a>
+</div>
+
+</div>
+
+
+<script src="{% static 'js/signup.js' %}" defer></script>
+{% endblock body %}

@@ -1,0 +1,140 @@
+{% extends "home.html" %}
+{% load static %}
+{% load image_extras %}
+
+{% block title %}{{ blog.title }} – ZeroCodeBots Blog{% endblock %}
+
+{% block breadcrumbs %}
+<link rel="canonical" href="https://zerocodebots.com/blog/{{ blog.slug }}/" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://zerocodebots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Blog",
+      "item": "https://zerocodebots.com/blog/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ blog.title|escapejs }}",
+      "item": "https://zerocodebots.com/blog/{{ blog.slug }}/"
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block style %}
+<link rel="preload"
+      href="{% static 'css/blog-detail.css' %}"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'">
+<noscript>
+  <link rel="stylesheet" href="{% static 'css/blog-detail.css' %}">
+</noscript>
+{% endblock %}
+
+{% block body %}
+<article class="blog-detail container">
+
+  <!-- Header -->
+  <header class="blog-header">
+    <span class="blog-category">{{ blog.category }}</span>
+    <h1 class="blog-title">{{ blog.title }}</h1>
+
+    <div class="blog-meta">
+      <div class="author-info">
+        <div class="author-avatar">
+          {{ blog.author.username|first|upper }}
+        </div>
+        <div>
+          <strong>{{ blog.author.get_full_name|default:blog.author.username }}</strong>
+          <small>@{{ blog.author.username }}</small>
+        </div>
+      </div>
+
+      <span>
+        <i class="fas fa-calendar" aria-hidden="true"></i>
+        {{ blog.created_at|date:"F d, Y" }}
+      </span>
+      <span>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        {{ blog.views }} views
+      </span>
+    </div>
+  </header>
+
+  <!-- Featured Image (LCP safe) -->
+ {% if blog.featured_image %}
+<figure class="featured-image">
+  <img
+    src="{{ blog.featured_image.url }}"
+    alt="{{ blog.title }}"
+    loading="lazy"
+    decoding="async"
+    width="1500"
+    height="788"
+    style="width:100%; height:auto;">
+</figure>
+{% endif %}
+
+  <!-- Content -->
+  <section class="blog-content">
+    {{ blog.content|safe }}
+  </section>
+
+  <!-- Author actions -->
+  {% if user == blog.author %}
+  <div class="blog-actions">
+    <a href="{% url 'edit_blog' blog.id %}" class="btn btn-outline">
+      <i class="fas fa-edit" aria-hidden="true"></i> Edit
+    </a>
+    <a href="{% url 'delete_blog' blog.id %}" class="btn btn-danger">
+      <i class="fas fa-trash" aria-hidden="true"></i> Delete
+    </a>
+  </div>
+  {% endif %}
+
+  <!-- Related Blogs -->
+  {% if related_blogs %}
+<section class="related-section">
+  <h2>Related Articles</h2>
+
+  <div class="related-grid">
+    {% for related in related_blogs %}
+    <a href="{% url 'blog_detail' related.slug %}" class="related-card">
+
+      {% if related.featured_image %}
+      <img
+        src="{{ related.featured_image.url }}"
+        alt="{{ related.title }}"
+        width="400"
+        height="225"
+        loading="lazy"
+        decoding="async">
+      {% endif %}
+
+      <div class="related-content">
+        <h3>{{ related.title }}</h3>
+        <p>{{ related.excerpt|truncatewords:12 }}</p>
+      </div>
+
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+
+</article>
+{% endblock %}

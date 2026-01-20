@@ -1,0 +1,107 @@
+{% extends "home.html" %}
+
+{% block title %}
+Features | Website Chatbot with Analytics – ZeroCodeBots
+{% endblock %}
+
+{% block breadcrumbs %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://zerocodebots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "about",
+      "item": "https://zerocodebots.com/about/"
+    }
+  ]
+}
+</script>
+{% endblock breadcrumbs %}
+{% block style %}
+  <link rel="canonical" href="https://zerocodebots.com/" />
+{% endblock style %}
+{% block body %}
+
+<section class="section features-detailed" aria-labelledby="features-title">
+  <div class="container">
+
+    <!-- PAGE HEADER -->
+    <header class="section-header">
+      <h1 id="features-title">Website Chatbot Features</h1>
+      <p>
+        Everything you need to create, embed, and analyze a website chatbot
+        using your own questions and answers.
+      </p>
+    </header>
+
+    <!-- FEATURE GROUP -->
+    <h2 class="features-group-title">Core Chatbot Capabilities</h2>
+
+    <div class="features-grid">
+      <article class="feature-card">
+        <h3>Q&A-Based Chatbot</h3>
+        <p>
+          Create chatbots by defining your own questions and answers.
+          No AI training, coding, or complex setup required.
+        </p>
+      </article>
+
+      <article class="feature-card">
+        <h3>Easy Website Integration</h3>
+        <p>
+          Copy a single embed code and paste it into your website.
+          The chatbot appears instantly.
+        </p>
+      </article>
+
+      <article class="feature-card">
+        <h3>Conversation Analytics</h3>
+        <p>
+          View chatbot conversations, questions asked, and responses
+          directly from your analytics dashboard.
+        </p>
+      </article>
+    </div>
+
+    <!-- ANALYTICS GROUP -->
+    <h2 class="features-group-title">Analytics & Insights</h2>
+
+    <div class="features-grid">
+      <article class="feature-card">
+        <h3>User Interaction Insights</h3>
+        <p>
+          Understand what users ask most often and how they interact
+          with your chatbot.
+        </p>
+      </article>
+
+      <article class="feature-card">
+        <h3>Real-Time Updates</h3>
+        <p>
+          Update chatbot questions and answers at any time.
+          Changes reflect immediately on your website.
+        </p>
+      </article>
+
+      <article class="feature-card">
+        <h3>No-Code Dashboard</h3>
+        <p>
+          Manage your chatbot and analytics through a simple,
+          beginner-friendly dashboard.
+        </p>
+      </article>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}

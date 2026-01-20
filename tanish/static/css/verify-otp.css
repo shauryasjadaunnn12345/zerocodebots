@@ -1,0 +1,104 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f1f4f8;
+}
+
+/* Page layout */
+.verify-otp-page {
+  min-height: 75vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card */
+.otp-container {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  animation: slideIn 0.5s ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.otp-container h2 {
+  text-align: center;
+  color: #1f2225;
+  margin-bottom: 0.4rem;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #5a6470;
+  margin-bottom: 1.6rem;
+}
+
+/* Input */
+form input[type="text"] {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1.2rem;
+  border: 1px solid #cfd6dd;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+}
+
+form input[type="text"]:focus {
+  border-color: #1f2225;
+  outline: none;
+  background-color: #ffffff;
+}
+
+/* Button */
+.primary-btn {
+  width: 100%;
+  background-color: #346970ff;
+  color: #ffffff;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.primary-btn:hover {
+  opacity: 0.9;
+}
+
+/* Back link */
+.back-link {
+  text-align: center;
+  margin-top: 1.2rem;
+}
+
+.back-link a {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.back-link a:hover {
+  text-decoration: underline;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .otp-container {
+    margin: 1.5rem;
+    padding: 2rem;
+  }
+}

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chatbot</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+    }
+
+    .chat-container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+
+    .chat-box {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      scroll-behavior: smooth;
+      padding-bottom: 1rem;
+    }
+
+    .chat-bubble {
+      margin: 0.5rem;
+      padding: 0.75rem 1rem;
+      border-radius: 18px;
+      max-width: 75%;
+      position: relative;
+      line-height: 1.5;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .user {
+      background: #007bff;
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
+    }
+
+    .bot {
+      background: #e4e4e4;
+      color: #111;
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+    }
+
+    form {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      align-items: center;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      padding: 0.75rem 1.25rem;
+      background: #007bff;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .mic-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.6rem 0.8rem;
+      background: #f1f1f1;
+      color: #333;
+      border-radius: 50%;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .mic-button.active {
+      background: #ff4d4f;
+      color: #fff;
+      border-color: #ff4d4f;
+    }
+
+    .typing {
+      width: 50px;
+      display: flex;
+      justify-content: space-between;
+      margin: 0.5rem;
+      align-self: flex-start;
+    }
+
+    .typing span {
+      width: 8px;
+      height: 8px;
+      background-color: #aaa;
+      border-radius: 50%;
+      animation: blink 1.4s infinite;
+    }
+
+    .typing span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes blink {
+      0%, 80%, 100% { opacity: 0.3; }
+      40% { opacity: 1; }
+    }
+    .mcq-list { margin: 0.5rem 0 0.5rem 0; display:flex; flex-direction:column; gap:0.5rem }
+    .mcq-option { padding:0.6rem; border-radius:8px; background:linear-gradient(180deg,#ffffff,#fbfdff); border:1px solid #e3e8ee; cursor:pointer; box-shadow:0 1px 0 rgba(16,24,40,0.02) }
+    .mcq-option:hover { background:#f6f8fa; transform:translateY(-1px); transition:all .12s }
+    .confidence-badge { font-size:0.8rem; color:#0f172a; background:#eef2ff; padding:0.2rem 0.5rem; border-radius:6px; margin-left:0.5rem }
+    .feedback-row { margin-top:0.6rem; display:flex; gap:0.5rem; align-items:center }
+    .feedback-row input[type="number"] { width:64px; padding:0.4rem }
+    .clarify-list { margin-top:0.5rem; display:flex; flex-direction:column; gap:0.4rem }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-box" id="chat-box"></div>
+    <form id="chat-form">
+      {% csrf_token %}
+      <input id="chat-input" placeholder="Ask a question..." required>
+      {% if project.voice_enabled %}
+      <button type="button" id="mic-button" class="mic-button" title="Speak your question">🎤</button>
+      <button type="button" id="tts-toggle" class="mic-button" title="Toggle voice">🔊</button>
+      <select id="voice-select" style="display:none;margin-left:0.5rem;padding:0.4rem;border-radius:6px;border:1px solid #ccc"></select>
+      {% endif %}
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script>
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const chatBox = document.getElementById('chat-box');
+    const micButton = document.getElementById('mic-button');
+    const ttsToggle = document.getElementById('tts-toggle');
+    const voiceSelect = document.getElementById('voice-select');
+    const voiceEnabled = {{ project.voice_enabled|yesno:"true,false" }};
+    const chatLang = "{{ chat_lang }}" || 'en';
+
+    function scrollToBottom() {
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function createTypingDots() {
+      const dots = document.createElement('div');
+      dots.className = 'typing';
+      dots.innerHTML = '<span></span><span></span><span></span>';
+      return dots;
+    }
+
+    function typeText(element, text, speed = 20) {
+      let index = 0;
+      const interval = setInterval(() => {
+        element.textContent += text[index++];
+        scrollToBottom();
+        if (index >= text.length) clearInterval(interval);
+      }, speed);
+    }
+
+    chatForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const message = chatInput.value.trim();
+      if (!message) return;
+
+      // Add user message
+      const userBubble = document.createElement('div');
+      userBubble.className = 'chat-bubble user';
+      userBubble.textContent = message;
+      chatBox.appendChild(userBubble);
+      scrollToBottom();
+      chatInput.value = '';
+
+      // Add typing dots for bot
+      const typingDots = createTypingDots();
+      chatBox.appendChild(typingDots);
+      scrollToBottom();
+
+      // Fetch bot reply
+      fetch("{% url 'ask_bot' project.id %}", {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({ question: message })
+      })
+      .then(res => res.json())
+      .then(data => {
+        // Remove typing dots
+        chatBox.removeChild(typingDots);
+
+        // Add bot bubble with typing animation
+        const botBubble = document.createElement('div');
+        botBubble.className = 'chat-bubble bot';
+        chatBox.appendChild(botBubble);
+        // main
+        const mainText = document.createElement('div');
+        typeText(mainText, data.answer);
+        botBubble.appendChild(mainText);
+
+        // Image returned from QA (if any)
+        if (data.image && data.image.url) {
+          try {
+            const imgWrap = document.createElement('div');
+            imgWrap.style.marginTop = '0.5rem';
+            const img = document.createElement('img');
+            img.src = data.image.url;
+            img.alt = data.image.description || 'Answer image';
+            img.style.maxWidth = '100%';
+            img.style.borderRadius = '8px';
+            img.style.display = 'block';
+            img.style.cursor = 'pointer';
+            img.addEventListener('click', () => window.open(data.image.url, '_blank'));
+            imgWrap.appendChild(img);
+            if (data.image.description) {
+              const cap = document.createElement('div');
+              cap.style.fontSize = '0.85rem';
+              cap.style.color = '#6b7280';
+              cap.style.marginTop = '0.35rem';
+              cap.textContent = data.image.description;
+              imgWrap.appendChild(cap);
+            }
+            botBubble.appendChild(imgWrap);
+          } catch (e) { console.warn('Failed to render image', e); }
+        }
+        // confidence
+        if (data.confidence !== undefined && data.confidence !== null) {
+          const c = document.createElement('span');
+          c.className = 'confidence-badge';
+          c.textContent = 'Confidence: ' + (Math.round(data.confidence * 100) / 100);
+          botBubble.appendChild(c);
+        }
+
+        // MCQ
+        if (data.mcq && Array.isArray(data.mcq) && data.mcq.length) {
+          const list = document.createElement('div');
+          list.className = 'mcq-list';
+          data.mcq.forEach(opt => {
+            const item = document.createElement('div');
+            item.className = 'mcq-option';
+            item.textContent = opt.label || opt.text || String(opt);
+            item.addEventListener('click', () => {
+              fetch("{% url 'submit_feedback' project.id %}", {
+                method: 'POST',
+                headers: {
+                  'X-CSRFToken': '{{ csrf_token }}',
+                  'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({ selected_option: item.textContent, question: message, response: data.answer })
+              }).catch(()=>{});
+              chatInput.value = item.textContent;
+              chatForm.dispatchEvent(new Event('submit'));
+            });
+            list.appendChild(item);
+          });
+          botBubble.appendChild(list);
+        }
+
+        // Clarify options
+        if (data.clarify && Array.isArray(data.clarify)) {
+          const clarify = document.createElement('div');
+          clarify.className = 'clarify-list';
+          data.clarify.forEach(copt => {
+            const btn = document.createElement('div');
+            btn.className = 'mcq-option';
+            btn.textContent = copt;
+            btn.addEventListener('click', () => {
+              chatInput.value = copt;
+              chatForm.dispatchEvent(new Event('submit'));
+            });
+            clarify.appendChild(btn);
+          });
+          botBubble.appendChild(clarify);
+        }
+
+        // feedback UI: subtle thumbs, expand form only on thumbs-down or low confidence
+        const feedbackControls = document.createElement('div');
+        feedbackControls.style.display = 'flex';
+        feedbackControls.style.gap = '0.5rem';
+        feedbackControls.style.alignItems = 'center';
+
+        const thumbsUp = document.createElement('button'); thumbsUp.type='button'; thumbsUp.textContent='👍'; thumbsUp.title='Helpful';
+        const thumbsDown = document.createElement('button'); thumbsDown.type='button'; thumbsDown.textContent='👎'; thumbsDown.title='Not helpful';
+        feedbackControls.appendChild(thumbsUp); feedbackControls.appendChild(thumbsDown);
+
+        const fullForm = document.createElement('div'); fullForm.style.display='none'; fullForm.className='feedback-row';
+        const rating = document.createElement('input'); rating.type='number'; rating.min=1; rating.max=5; rating.placeholder='1-5';
+        const comment = document.createElement('input'); comment.type='text'; comment.placeholder='Comment (optional)';
+        const sendFb = document.createElement('button'); sendFb.type='button'; sendFb.textContent='Send Feedback';
+        fullForm.appendChild(rating); fullForm.appendChild(comment); fullForm.appendChild(sendFb);
+        feedbackControls.appendChild(fullForm);
+
+        function postFeedback(payload) {
+          try {
+            if (data.bot_response_id) payload.bot_response_id = data.bot_response_id;
+            fetch("{% url 'submit_feedback' project.id %}", {
+              method: 'POST', headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: new URLSearchParams(payload)
+            }).catch(()=>{});
+          } catch(e){}
+        }
+
+        thumbsUp.addEventListener('click', () => { postFeedback({ selected_option:'thumbs_up', question: message, response: data.answer }); thumbsUp.disabled=true; thumbsUp.textContent='Thanks 👍'; });
+        thumbsDown.addEventListener('click', () => {
+          postFeedback({ selected_option: 'thumbs_down', question: message, response: data.answer });
+          thumbsDown.disabled = true; thumbsDown.textContent = 'Thanks 👎';
+          const addComment = document.createElement('button'); addComment.type='button'; addComment.textContent='Add comment'; addComment.style.marginLeft='0.4rem';
+          addComment.addEventListener('click', () => { fullForm.style.display='flex'; addComment.disabled=true; });
+          feedbackControls.appendChild(addComment);
+        });
+        sendFb.addEventListener('click', () => { postFeedback({ rating: rating.value, comment: comment.value, question: message, response: data.answer }); sendFb.textContent='Thanks'; sendFb.disabled=true; });
+
+        botBubble.appendChild(feedbackControls);
+
+        if (data.confidence !== undefined && data.confidence !== null && Number(data.confidence) < 0.6) { fullForm.style.display='flex'; }
+
+        // Optional: speak the bot's response using browser TTS
+        if (voiceEnabled && 'speechSynthesis' in window && isTtsOn()) {
+          const utterance = new SpeechSynthesisUtterance(data.answer);
+          utterance.lang = chatLang === 'hi' ? 'hi-IN' : 'en-IN';
+          const selected = getSelectedVoice();
+          if (selected) utterance.voice = selected;
+          window.speechSynthesis.cancel();
+          window.speechSynthesis.speak(utterance);
+        }
+      })
+      .catch(err => {
+        console.error("Chat error:", err);
+        chatBox.removeChild(typingDots);
+        const errorBubble = document.createElement('div');
+        errorBubble.className = 'chat-bubble bot';
+        errorBubble.textContent = "Something went wrong. Please try again.";
+        chatBox.appendChild(errorBubble);
+        scrollToBottom();
+      });
+    });
+
+    // Optional voice input using Web Speech API (client-side STT)
+    if (voiceEnabled && micButton) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        micButton.style.display = 'none';
+      } else {
+        const recognition = new SpeechRecognition();
+        recognition.lang = (chatLang === 'hi') ? 'hi-IN' : 'en-IN';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        let listening = false;
+
+        micButton.addEventListener('click', () => {
+          if (!listening) {
+            recognition.start();
+          } else {
+            recognition.stop();
+          }
+        });
+
+        recognition.addEventListener('start', () => {
+          listening = true;
+          micButton.classList.add('active');
+        });
+
+        recognition.addEventListener('end', () => {
+          listening = false;
+          micButton.classList.remove('active');
+        });
+
+        recognition.addEventListener('result', (event) => {
+          const transcript = event.results[0][0].transcript;
+          if (transcript) {
+            chatInput.value = transcript;
+            chatForm.dispatchEvent(new Event('submit'));
+          }
+        });
+
+        recognition.addEventListener('error', (event) => {
+          console.error('Speech recognition error:', event.error);
+        });
+      }
+    }
+
+    // TTS toggle and voice selection
+    function isTtsOn() { try { return localStorage.getItem('zerocodebots_tts') !== 'off'; } catch(e){ return true; } }
+    function setTtsOn(on) { try { localStorage.setItem('zerocodebots_tts', on ? 'on' : 'off'); } catch(e){} if (ttsToggle) ttsToggle.textContent = on ? '🔊' : '🔈'; }
+    function populateVoices() { if (!('speechSynthesis' in window)) return; const voices = window.speechSynthesis.getVoices(); if (!voices || !voices.length) return; if (voices.length > 1 && voiceSelect) voiceSelect.style.display = ''; voiceSelect.innerHTML=''; voices.forEach((v, idx) => { const opt=document.createElement('option'); opt.value=idx; opt.textContent=`${v.name} (${v.lang})`; voiceSelect.appendChild(opt); }); }
+    function getSelectedVoice() { try { if (!('speechSynthesis' in window)) return null; const voices = window.speechSynthesis.getVoices(); const idx = parseInt(voiceSelect.value || '0'); return voices[idx] || null; } catch(e){ return null; } }
+    if (ttsToggle) { ttsToggle.addEventListener('click', () => setTtsOn(!isTtsOn())); setTtsOn(isTtsOn()); }
+    if ('speechSynthesis' in window) { populateVoices(); window.speechSynthesis.onvoiceschanged = populateVoices; }
+    });
+  </script>
+</body>
+</html>

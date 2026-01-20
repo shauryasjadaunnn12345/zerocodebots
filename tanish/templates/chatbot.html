@@ -1,0 +1,72 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}Test Your Chatbot | ZeroCodeBots{% endblock title %}
+{% block breadcrumbs %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://zerocodebots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Edit Chatbot",
+      "item": "https://zerocodebots.com/project/{{ project.id }}/edit/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Test Chatbot",
+      "item": "https://zerocodebots.com/chatbot/{{ project.id }}/"
+    }
+  ]
+}
+</script>
+{% endblock breadcrumbs %}
+
+
+{% block style %}
+<link rel="preload" href="{% static 'css/chatbot.css' %}" as="style">
+<link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
+{% endblock style %}
+
+{% block body %}
+<h2 class="page-title">Test your chatbot</h2>
+
+<div class="chat-container">
+  <div class="chat-box" id="chat-box"></div>
+</div>
+
+<form id="chat-form" data-project="{{ project.id }}">
+  {% csrf_token %}
+  <input type="text" id="chat-input" placeholder="Ask a question…" autocomplete="off" required>
+
+  {% if project.voice_enabled %}
+    <button type="button" id="mic-button" class="mic-button" aria-label="Voice input">🎤</button>
+    <button type="button" id="tts-toggle" class="mic-button" aria-label="Toggle voice">🔊</button>
+    <select id="voice-select" hidden></select>
+  {% endif %}
+
+  <button type="submit">Send</button>
+</form>
+
+<script>
+  /* minimal config only */
+  window.CHATBOT_CONFIG = {
+    askUrl: "{% url 'ask_bot' project.id %}",
+    feedbackUrl: "{% url 'submit_feedback' project.id %}",
+    csrf: "{{ csrf_token }}",
+    voiceEnabled: {{ project.voice_enabled|yesno:"true,false" }},
+    lang: "{{ chat_lang|default:'en' }}"
+  };
+</script>
+
+<script src="{% static 'js/chatbot.js' %}" defer></script>
+{% endblock body %}

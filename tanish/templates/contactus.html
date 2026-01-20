@@ -1,0 +1,181 @@
+{% extends "home.html" %}
+
+{% block title %}Contact Us – ZeroCodeBots{% endblock %}
+
+{% block breadcrumbs %}
+<link rel="canonical" href="https://zerocodebots.com/contact/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://zerocodebots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Contact",
+      "item": "https://zerocodebots.com/contact/"
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "name": "Contact ZeroCodeBots",
+  "url": "https://zerocodebots.com/contact/",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "ZeroCodeBots",
+    "url": "https://zerocodebots.com",
+    "email": "zerocodebots@zohomail.in",
+    "telephone": "+918218647730"
+  }
+}
+</script>
+{% endblock breadcrumbs %}
+
+{% block body %}
+<section class="contact-section">
+  <div class="container">
+
+    <header class="section-header">
+      <h1>Get in Touch</h1>
+      <p>Have questions or want to get started? We reply within 24 hours.</p>
+    </header>
+
+    <div class="contact-wrapper">
+
+      <!-- CONTACT FORM -->
+      <div class="contact-form-container">
+        <h2>Send us a Message</h2>
+
+        <form method="post" onsubmit="handleContactSubmit(event)" class="contact-form">
+          {% csrf_token %}
+
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input id="name" name="name" type="text" required placeholder="John Doe">
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input id="email" name="email" type="email" required placeholder="you@example.com">
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone (optional)</label>
+            <input id="phone" name="phone" type="tel" placeholder="+91 821 864 7730">
+          </div>
+
+          <div class="form-group">
+            <label for="subject">Subject</label>
+            <select id="subject" name="subject" required>
+              <option value="">Select a subject</option>
+              <option value="sales">Sales Inquiry</option>
+              <option value="support">Technical Support</option>
+              <option value="partnership">Partnership</option>
+              <option value="feedback">Feedback</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="6" required placeholder="Tell us how we can help..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            Send Message
+          </button>
+        </form>
+      </div>
+
+      <!-- CONTACT INFO -->
+      <aside class="contact-info-container" aria-label="Contact information">
+        <div class="contact-info-card">
+          <h2>Contact Information</h2>
+
+          <div class="info-item">
+            <i class="fas fa-envelope" aria-hidden="true"></i>
+            <div>
+              <strong>Email</strong>
+              <a href="mailto:zerocodebots@zohomail.in">zerocodebots@zohomail.in</a>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <i class="fas fa-phone" aria-hidden="true"></i>
+            <div>
+              <strong>Phone</strong>
+              <a href="tel:+918218647730">+91 821 864 7730</a>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <div>
+              <strong>Address</strong>
+              <p>
+                Sector 10 ,faridabad,<br>
+                Haryana, 121006,<br>
+                India
+              </p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <i class="fas fa-clock" aria-hidden="true"></i>
+            <div>
+              <strong>Business Hours</strong>
+              <p>
+                Mon–Fri: 9:00 AM – 6:00 PM<br>
+                Sat: 10:00 AM – 4:00 PM<br>
+                Sun: Closed
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SOCIAL -->
+        <div class="social-connect">
+          <h3>Connect With Us</h3>
+          <div class="social-links">
+            <a href="https://linkedin.com/company/zerocodebots" aria-label="ZeroCodeBots on LinkedIn">
+              <i class="fab fa-linkedin"></i>
+            </a>
+           
+            <a href="https://github.com/shauryasjadaunnn12345" aria-label="ZeroCodeBots on GitHub">
+              <i class="fab fa-github"></i>
+            </a>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<script>
+function handleContactSubmit(event) {
+  event.preventDefault();
+  
+  const form = event.target;
+  const name = form.querySelector('#name').value;
+  const email = form.querySelector('#email').value;
+  const message = form.querySelector('#message').value;
+  
+  if (name && email && message) {
+    alert('Thank you for reaching out! We will respond to ' + email + ' within 24 hours.');
+    form.reset();
+  }
+}
+</script>
+{% endblock %}

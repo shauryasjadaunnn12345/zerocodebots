@@ -1,0 +1,154 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}Login | ZeroCodeBots{% endblock title %}
+
+{% block breadcrumbs %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://zerocodebots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Login",
+      "item": "https://zerocodebots.com/login/"
+    }
+  ]
+}
+</script>
+{% endblock breadcrumbs %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+<style>
+  /* ==========================
+   GOOGLE AUTH BUTTON
+========================== */
+
+.google-auth {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.google-auth-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  width: 100%;
+  max-width: 420px;
+  padding: 0.75rem 1rem;
+
+  background-color: #ffffff;
+  color: #262b31;
+
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+
+  font-size: 0.95rem;
+  font-weight: 500;
+  font-family: 'Segoe UI', sans-serif;
+
+  text-decoration: none;
+  cursor: pointer;
+
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.google-auth-btn img {
+  width: 18px;
+  height: 18px;
+}
+
+.google-auth-btn:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.google-auth-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(45, 143, 143, 0.35);
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e5e7eb;
+}
+.form-errors {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.divider span {
+  padding: 0 10px;
+}
+
+</style>
+{% endblock style %}
+
+{% block body %}
+<div class="login-page">
+
+  <div class="login-container">
+    <h2>Login to ZeroCodeBots</h2>
+
+    {% if form.errors %}
+      <div class="form-errors">
+        {{ form.errors }}
+      </div>
+    {% endif %}
+
+    <form method="post" aria-label="Login form">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Login</button>
+    </form>
+
+    <div class="divider">
+      <span>OR</span>
+    </div>
+
+    <div class="google-auth">
+      <a href="/accounts/google/login/" class="google-auth-btn">
+        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
+        <span>Continue with Google</span>
+      </a>
+    </div>
+
+    <div class="auth-links">
+      <a href="{% url 'forgot_password' %}">Forgot Password?</a>
+      <a href="{% url 'signup' %}">New User? Sign Up</a>
+    </div>
+  </div>
+
+</div>
+
+<script src="{% static 'js/login.js' %}" defer></script>
+{% endblock body %}

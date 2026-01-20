@@ -1,0 +1,132 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}Complete Signup | ZeroCodeBots{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/signup.css' %}">
+<style>/* ======================================
+   SOCIAL ACCOUNT SIGNUP (GOOGLE)
+====================================== */
+
+.social-signup h2 {
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.social-subtext {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+
+.social-signup form {
+  margin-top: 1rem;
+}
+
+.social-signup input {
+  background-color: #f9fafb;
+}
+
+.social-signup input[readonly] {
+  background-color: #f3f4f6;
+  color: #374151;
+  cursor: not-allowed;
+}
+
+.full-width {
+  width: 100%;
+  margin-top: 1rem;
+}
+/* ======================================
+   SOCIAL SIGNUP ERROR STYLES
+====================================== */
+
+/* Top error box (non-field errors) */
+.form-errors {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.form-errors ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+/* Inline field errors */
+.field-error {
+  margin-top: 0.3rem;
+  font-size: 0.85rem;
+  color: #dc2626;
+}
+
+/* Improve readonly Google email look */
+.social-signup input[readonly] {
+  background-color: #f3f4f6;
+  color: #374151;
+  cursor: not-allowed;
+}
+
+/* Full width button helper */
+.full-width {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+</style>
+{% endblock style %}
+
+{% block body %}
+<div class="signup-container social-signup">
+
+  <h2>Almost There 🚀</h2>
+
+  <p class="social-subtext">
+    You’re signing in using your <strong>Google account</strong>.
+    Please confirm your details to continue.
+  </p>
+
+  {# 🔴 NON-FIELD ERRORS (TOP LEVEL) #}
+  {% if form.non_field_errors %}
+    <div class="form-errors">
+      <ul>
+        {% for error in form.non_field_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    {% for field in form %}
+      <div class="form-group">
+        <label>{{ field.label }}</label>
+        {{ field }}
+
+        {# 🔴 FIELD ERRORS (INLINE) #}
+        {% if field.errors %}
+          <div class="field-error">
+            {% for error in field.errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary full-width">
+      Complete Signup
+    </button>
+  </form>
+
+</div>
+{% endblock body %}

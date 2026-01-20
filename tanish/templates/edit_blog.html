@@ -1,0 +1,134 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}Edit Blog – ZeroCodeBots{% endblock %}
+
+{% block breadcrumbs %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://zerocodebots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Blog",
+      "item": "https://zerocodebots.com/blog/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Edit Blog",
+      "item": "https://zerocodebots.com/blog/{{ blog.slug }}/edit/"
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block style %}
+  
+
+<link rel="stylesheet" href="{% static 'css/blog-form.css' %}">
+{% endblock %}
+
+{% block body %}
+<section class="form-section">
+  <div class="container">
+
+    <div class="form-container">
+      <header class="form-header">
+        <h1><i class="fas fa-edit"></i> Edit Blog</h1>
+        <p>Update your content and publish changes</p>
+      </header>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="{% if message.tags == 'error' %}error-message{% else %}success-message{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Title -->
+        <div class="form-group">
+          <label>Blog Title</label>
+          {{ form.title }}
+          {% if form.title.errors %}
+            <div class="field-error">{{ form.title.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Excerpt -->
+        <div class="form-group">
+          <label>Excerpt</label>
+          {{ form.excerpt }}
+          {% if form.excerpt.errors %}
+            <div class="field-error">{{ form.excerpt.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Category -->
+        <div class="form-group">
+          <label>Category</label>
+          {{ form.category }}
+          {% if form.category.errors %}
+            <div class="field-error">{{ form.category.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Featured Image -->
+        <div class="form-group">
+          <label>Featured Image</label>
+          {{ form.featured_image }}
+          {% if form.instance.featured_image %}
+            <div class="file-preview">
+              <img src="{{ form.instance.featured_image.url }}" alt="Featured image">
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Content -->
+        <div class="form-group large">
+          <label>Blog Content</label>
+          {{ form.content }}
+          {% if form.content.errors %}
+            <div class="field-error">{{ form.content.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Publish -->
+        <div class="form-group checkbox-group">
+          {{ form.is_published }}
+          <label>Published</label>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Update
+          </button>
+
+          <a href="{% url 'blog_detail' blog.slug %}" class="btn btn-secondary">
+            View
+          </a>
+
+          <a href="{% url 'delete_blog' blog.id %}" class="btn btn-danger">
+            Delete
+          </a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

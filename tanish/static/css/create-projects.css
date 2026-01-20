@@ -1,0 +1,87 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #fdfdfd;
+  color: #000;
+}
+
+.create-project-page {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.create-project-container {
+  max-width: 600px;
+  width: 100%;
+  padding: 2.5rem;
+  background: #ffffff;
+  border-radius: 12px;
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.create-project-container h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.create-project-form input,
+.create-project-form textarea,
+.create-project-form select {
+  width: 100%;
+  padding: 0.9rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s;
+}
+
+.create-project-form input:focus,
+.create-project-form textarea:focus,
+.create-project-form select:focus {
+  border-color: #000;
+  outline: none;
+}
+
+.create-project-submit {
+  width: 100%;
+  background-color: #307a74ff;
+  color: #fff;
+  padding: 0.9rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.create-project-submit:hover {
+  opacity: 0.85;
+}
+
+.errorlist {
+  color: #ff4d4f;
+  list-style: none;
+  padding-left: 0;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+  .create-project-container {
+    margin: 2rem 1rem;
+    padding: 2rem;
+  }
+}
