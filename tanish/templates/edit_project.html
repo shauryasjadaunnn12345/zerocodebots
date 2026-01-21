@@ -125,7 +125,7 @@
 &lt;script&gt;
 (function () {
   const botKey = "{{ project.bot_key }}";
-  const iframeUrl = "https://zerocodebots.onrender.com/embed_chatbot/?key=" + botKey;
+  const iframeUrl = "https://zerocodebots.onrender.com/embed-chatbot/?key=" + botKey;
   const iframe = document.createElement("iframe");
   iframe.src = iframeUrl;
   iframe.style.cssText =
@@ -154,3 +154,4 @@
 
 <script src="{% static 'js/edit-project.js' %}" defer></script>
 {% endblock body %}
+
