@@ -168,7 +168,7 @@ DATABASES={
 TEMPLATES[0]["OPTIONS"]["context_processors"] += [
     "django.template.context_processors.request",
 ]
-path("accounts/", include("allauth.urls")),
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -250,5 +250,6 @@ CACHES = {
 }
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
 
 
