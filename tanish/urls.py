@@ -43,7 +43,7 @@ path('project/<int:pk>/import-website/', views.import_from_website, name='import
     path('my-projects/', views.my_projects_view, name='my_projects'),
     path('chatbot/<int:project_id>/', views.chatbot_view, name='chatbot'),
 path('ask_bot/<int:project_id>/', views.ask_bot, name='ask_bot'),
-path("embed_chatbot/", views.embed_chatbot, name="embed_chatbot"),
+path("embed-chatbot/", views.embed_chatbot, name="embed_chatbot"),
 path('submit_feedback/<int:project_id>/', views.submit_feedback, name='submit_feedback'),
 path('project/<int:pk>/analytics/', views.project_analytics, name='project_analytics'),
 path('project/<int:pk>/analytics/export/', views.export_analytics, name='export_analytics'),
@@ -57,3 +57,4 @@ path('project/<int:pk>/summary/', views.project_summary_view, name='project_summ
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
