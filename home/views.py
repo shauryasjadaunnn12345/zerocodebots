@@ -1074,14 +1074,28 @@ from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 from home.models import Project
 
+from django.shortcuts import render, get_object_or_404
+from django.http import Http404
+from home.models import Project
+
 def embed_chatbot(request):
     bot_key = request.GET.get('key')
+
     if not bot_key:
-        raise Http404("Missing 'key' parameter in URL")
+        raise Http404("Missing 'key' parameter")
 
     project = get_object_or_404(Project, bot_key=bot_key)
     chat_lang = request.session.get('chat_lang', 'en')
-    return render(request, 'embed_chatbot.html', {'project': project, 'chat_lang': chat_lang})
+
+    return render(
+        request,
+        'embed_chatbot.html',
+        {
+            'project': project,
+            'chat_lang': chat_lang
+        }
+    )
+
 
 @login_required
 def project_summary_view(request, pk):
@@ -1362,4 +1376,5 @@ def privacy_policy(request):
 def terms_of_service(request):
 
     return render(request, 'terms_of_service.html')
+
 
