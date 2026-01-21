@@ -41,6 +41,7 @@ class Project(models.Model):
 
 
 
+
 class QuestionAnswer(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='qas')
     question = models.CharField(max_length=255)
@@ -180,3 +181,4 @@ class Newsletter(models.Model):
     def __str__(self):
 
         return f"{self.email} - {'Active' if self.is_active else 'Inactive'}"
+
