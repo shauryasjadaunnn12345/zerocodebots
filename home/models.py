@@ -35,9 +35,9 @@ class Project(models.Model):
     )
 
     def save(self, *args, **kwargs):
-    if not self.bot_key:
-        self.bot_key = generate_bot_key()
-    super().save(*args, **kwargs)
+        if not self.bot_key:
+            self.bot_key = generate_bot_key()
+        super().save(*args, **kwargs)
 
 
 
@@ -181,4 +181,5 @@ class Newsletter(models.Model):
     def __str__(self):
 
         return f"{self.email} - {'Active' if self.is_active else 'Inactive'}"
+
 
