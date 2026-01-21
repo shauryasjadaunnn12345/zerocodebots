@@ -56,15 +56,16 @@ def create_project_view(request):
     })
 
 
+from django.contrib.auth.decorators import login_required
+from django.forms import modelformset_factory
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+import traceback
+
 @login_required
 def edit_project_view(request, pk):
-    # Safely fetch the project for the current user
-    try:
-        project = Project.objects.get(pk=pk, user=request.user)
-    except Project.DoesNotExist:
-        return redirect('create_project')  # Graceful fallback
+    project = get_object_or_404(Project, pk=pk, user=request.user)
 
-    # Setup the formset for QuestionAnswer linked to this project
     QAFormSet = modelformset_factory(
         QuestionAnswer,
         form=QuestionAnswerForm,
@@ -73,22 +74,37 @@ def edit_project_view(request, pk):
     )
 
     if request.method == 'POST':
-        formset = QAFormSet(request.POST, request.FILES, queryset=project.qas.all())
-        if formset.is_valid():
-            instances = formset.save(commit=False)
-            for instance in instances:
-                instance.project = project
-                instance.save()
-            for obj in formset.deleted_objects:
-                obj.delete()
-            return redirect('edit_project', pk=pk)
+        try:
+            formset = QAFormSet(
+                request.POST,
+                request.FILES,
+                queryset=project.qas.all()
+            )
+
+            if formset.is_valid():
+                instances = formset.save(commit=False)
+
+                for instance in instances:
+                    instance.project = project
+                    instance.save()
+
+                for obj in formset.deleted_objects:
+                    obj.delete()
+
+                messages.success(request, "Project updated successfully")
+                return redirect('edit_project', pk=pk)
+            else:
+                print("❌ FORMSET ERRORS:", formset.errors)
+
+        except Exception as e:
+            print("❌ EDIT PROJECT CRASH:", str(e))
+            traceback.print_exc()
+            messages.error(request, "Something went wrong while saving.")
+
     else:
         formset = QAFormSet(queryset=project.qas.all())
 
-    return render(request, 'edit_project.html', {
-        'project': project,
-        'formset': formset,
-    })
+    return render(request, 'edit_project.ht_
 
 
 @login_required
@@ -1340,4 +1356,5 @@ def get_client_ip(request):
 def privacy_policy(request):
     return render(request, 'privacy_policy.html')
 def terms_of_service(request):
+
     return render(request, 'terms_of_service.html')
