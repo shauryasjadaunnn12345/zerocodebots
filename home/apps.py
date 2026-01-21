@@ -1,5 +1,4 @@
 from django.apps import AppConfig
-from django.conf import settings
 import os
 
 class HomeConfig(AppConfig):
@@ -7,14 +6,11 @@ class HomeConfig(AppConfig):
     name = "home"
 
     def ready(self):
-        # Avoid running during migrations
-        if os.environ.get("RUN_MAIN") != "true":
-            return
-
         try:
             from django.contrib.sites.models import Site
             from allauth.socialaccount.models import SocialApp
         except Exception:
+            # Tables not ready yet (first migrate) – silently skip
             return
 
         DOMAIN = "zerocodebots.onrender.com"
@@ -23,8 +19,9 @@ class HomeConfig(AppConfig):
         GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
         GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 
+        # Do NOT crash app if env vars missing
         if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
-            return  # Do not crash app if env vars missing
+            return
 
         # 1️⃣ Ensure Site ID = 1
         site, _ = Site.objects.update_or_create(
@@ -45,6 +42,6 @@ class HomeConfig(AppConfig):
             },
         )
 
-        # 3️⃣ Bind Site to SocialApp
+        # 3️⃣ Bind Site → SocialApp
         app.sites.set([site])
         app.save()
