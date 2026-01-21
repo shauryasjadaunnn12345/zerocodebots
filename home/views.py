@@ -104,7 +104,11 @@ def edit_project_view(request, pk):
     else:
         formset = QAFormSet(queryset=project.qas.all())
 
-    return render(request, 'edit_project.ht_
+    return render(request, 'edit_project.html', {
+    'project': project,
+    'formset': formset,
+})
+
 
 
 @login_required
@@ -1358,3 +1362,4 @@ def privacy_policy(request):
 def terms_of_service(request):
 
     return render(request, 'terms_of_service.html')
+
