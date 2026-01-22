@@ -1077,7 +1077,239 @@ from home.models import Project
 from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 from home.models import Project
+from django.shortcuts import render, get_object_or_404
+from django.http import Http404
+from home.models import Project
 
+
+@csrf_exempt
+def ask_bot_by_key(request):
+    """Ask bot endpoint for embedded chatbots using bot_key instead of project_id"""
+    if request.method == 'POST':
+        try:
+            question = request.POST.get('question')
+            bot_key = request.POST.get('key') or request.GET.get('key')
+            
+            if not bot_key:
+                return JsonResponse({'error': 'Missing bot key'}, status=400)
+            
+            project = get_object_or_404(Project, bot_key=bot_key)
+
+            # Detect and persist user language (English/Hindi for now)
+            previous_lang = request.session.get("chat_lang", "en")
+            language_code = detect_language(question, default=previous_lang)
+            request.session["chat_lang"] = language_code
+
+            # Track that a user message was sent
+            _track_event(
+                project,
+                "message_sent",
+                {
+                    "question": question,
+                    "language": language_code,
+                },
+            )
+
+            ai_payload = generate_openrouter_answer(project, question, language_code=language_code)
+            handled = _handle_intent(project, ai_payload)
+
+            # Confidence extraction (AI may include top-level or in data)
+            def _extract_confidence(payload):
+                c = None
+                if not payload:
+                    return None
+                if isinstance(payload, dict):
+                    c = payload.get('confidence')
+                    if c is None:
+                        data = payload.get('data') or {}
+                        c = data.get('confidence')
+                try:
+                    if c is not None:
+                        return float(c)
+                except Exception:
+                    return None
+                return None
+
+            confidence = _extract_confidence(ai_payload)
+
+            # Persist response for analytics / tuning
+            bot_resp = None
+            try:
+                bot_resp = BotResponse.objects.create(
+                    project=project,
+                    question=question or "",
+                    response=handled.get('message', ''),
+                    confidence=confidence,
+                    payload=ai_payload,
+                )
+            except Exception as e:
+                print('WARN: failed to save BotResponse:', e)
+
+            # Optional: persist context memory items if returned by the model
+            try:
+                data = ai_payload.get('data') or {}
+                memory = data.get('context_memory') or data.get('memory')
+                if isinstance(memory, dict):
+                    session_key = request.session.session_key or ''
+                    for k, v in memory.items():
+                        try:
+                            ConversationContext.objects.create(
+                                project=project,
+                                session_key=session_key,
+                                key=str(k),
+                                value=v,
+                            )
+                        except Exception as e:
+                            print('WARN: failed to save context:', e)
+            except Exception as e:
+                print('WARN: memory extraction error:', e)
+
+            # Track available structured features: MCQ, clarification, confidence
+            structured = {}
+            try:
+                data = ai_payload.get('data') or {}
+                if 'mcq' in ai_payload:
+                    structured['mcq'] = ai_payload.get('mcq')
+                if 'mcq' in data:
+                    structured['mcq'] = data.get('mcq')
+                if 'clarify' in ai_payload:
+                    structured['clarify'] = ai_payload.get('clarify')
+                if 'clarify' in data:
+                    structured['clarify'] = data.get('clarify')
+                if confidence is not None:
+                    structured['confidence'] = confidence
+            except Exception:
+                structured = {}
+
+            if structured.get('mcq'):
+                _track_event(project, 'mcq_present', {'mcq_count': len(structured.get('mcq') or [])})
+
+            # Keep existing flow: "answer" is still the main text response
+            # while also exposing structured intent and data.
+            resp = {
+                'answer': handled.get('message', ''),
+                'intent': handled.get('intent', 'unknown'),
+                'data': handled.get('data', {}),
+            }
+            if bot_resp is not None:
+                resp['bot_response_id'] = bot_resp.id
+            # merge structured items into response under top-level keys
+            resp.update(structured)
+
+            # If the AI didn't include an image but a matching QuestionAnswer has one,
+            # attach it to the response so the frontend can render images stored in the QA.
+            try:
+                # If model returned an image inside `data`, prefer/promote it to
+                # a top-level `image` field (normalizing to an absolute URL when
+                # possible) so existing frontends can render it uniformly.
+                model_image = None
+                try:
+                    model_image = (ai_payload.get('data') or {}).get('image')
+                except Exception:
+                    model_image = None
+
+                if model_image and isinstance(model_image, dict):
+                    img_url = model_image.get('url') or ''
+                    img_desc = model_image.get('caption') or model_image.get('description') or model_image.get('reason') or ''
+                    try:
+                        if img_url and not img_url.startswith('http'):
+                            img_url = request.build_absolute_uri(img_url)
+                    except Exception:
+                        pass
+
+                    if img_url or img_desc:
+                        resp['image'] = {'url': img_url, 'description': img_desc}
+
+                # Only run QA-based attachment when no image is present yet.
+                if 'image' not in resp or not resp.get('image'):
+                    qa_match = None
+                    if question:
+                        # Exact match first
+                        qa_match = project.qas.filter(question__iexact=question).first()
+                    # Fallback: contains
+                    if not qa_match and question:
+                        qa_match = project.qas.filter(question__icontains=question).first()
+
+                    # If still no match, try fuzzy similarity against QAs that have images
+                    if not qa_match and question:
+                        try:
+                            best = None
+                            best_score = 0.0
+                            q_lower = question.lower().strip()
+                            handled_msg = (handled.get('message') or '').lower().strip()
+
+                            def token_overlap(a: str, b: str) -> float:
+                                sa = set(a.split())
+                                sb = set(b.split())
+                                if not sa or not sb:
+                                    return 0.0
+                                inter = sa.intersection(sb)
+                                return len(inter) / max(1, min(len(sa), len(sb)))
+
+                            for qa in project.qas.all():
+                                if not getattr(qa, 'image'):
+                                    continue
+                                qa_q = (qa.question or '').lower().strip()
+                                if not qa_q:
+                                    continue
+
+                                # similarity against user question and AI message
+                                score_q = difflib.SequenceMatcher(None, q_lower, qa_q).ratio() if q_lower else 0.0
+                                score_msg = difflib.SequenceMatcher(None, handled_msg, qa_q).ratio() if handled_msg else 0.0
+                                # token overlap as alternative signal
+                                overlap_q = token_overlap(q_lower, qa_q) if q_lower else 0.0
+                                overlap_msg = token_overlap(handled_msg, qa_q) if handled_msg else 0.0
+
+                                score = max(score_q, score_msg, overlap_q, overlap_msg)
+                                if score > best_score:
+                                    best_score = score
+                                    best = qa
+
+                            # threshold: accept only reasonably similar matches
+                            if best and best_score >= 0.45:
+                                qa_match = best
+                                try:
+                                    _track_event(project, 'qa_image_matched', {'qa_id': qa_match.id, 'score': best_score})
+                                except Exception:
+                                    pass
+                        except Exception:
+                            qa_match = None
+
+                    if qa_match and getattr(qa_match, 'image'):
+                        try:
+                            image_url = request.build_absolute_uri(qa_match.image.url)
+                        except Exception:
+                            image_url = qa_match.image.url if qa_match.image else ''
+
+                        resp['image'] = {
+                            'url': image_url,
+                            'description': qa_match.image_description or ''
+                        }
+
+                        # Persist into BotResponse.payload for analytics / later inspection
+                        if bot_resp is not None:
+                            try:
+                                payload = bot_resp.payload or {}
+                                payload['qa_image'] = {
+                                    'qa_id': qa_match.id,
+                                    'url': resp['image']['url'],
+                                    'description': resp['image']['description'],
+                                }
+                                bot_resp.payload = payload
+                                bot_resp.save(update_fields=['payload'])
+                            except Exception as e:
+                                print('WARN: failed to update BotResponse payload with QA image:', e)
+            except Exception as e:
+                print('WARN: failed to attach QA image:', e)
+
+            return JsonResponse(resp)
+        except Exception as e:
+            import traceback
+            print("ERROR in ask_bot_by_key:", str(e))
+            traceback.print_exc()
+            return JsonResponse({'error': 'Internal server error'}, status=500)
+    else:
+        return JsonResponse({'error': 'POST method required'}, status=405)
 def embed_chatbot(request):
     bot_key = request.GET.get('key')
 
@@ -1376,5 +1608,6 @@ def privacy_policy(request):
 def terms_of_service(request):
 
     return render(request, 'terms_of_service.html')
+
 
 
