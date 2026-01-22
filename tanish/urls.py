@@ -51,10 +51,12 @@ path('project/<int:pk>/analytics/dashboard/', views.project_analytics_dashboard,
 path('project/<int:pk>/debug-qa-match/', views.debug_qa_match, name='debug_qa_match'),
 path('robots.txt', robots_txt, name='robots_txt'),
     path('sitemap.xml', sitemap_xml, name='sitemap_xml'),
+    path('ask_bot_by_key/', views.ask_bot_by_key, name='ask_bot_by_key'),
 path('project/<int:pk>/summary/', views.project_summary_view, name='project_summary'),
 
 
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
