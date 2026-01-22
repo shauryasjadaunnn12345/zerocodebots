@@ -139,9 +139,11 @@
 <body>
   <div class="chat-container">
     <div class="chat-box" id="chat-box"></div>
-    <form id="chat-form">
+    <form id="chat-form" onsubmit="return false;">
       {% csrf_token %}
+            <input type="hidden" name="key" value="{{ request.GET.key }}">
       <input id="chat-input" placeholder="Ask a question..." required>
+      
       {% if project.voice_enabled %}
       <button type="button" id="mic-button" class="mic-button" title="Speak your question">🎤</button>
       <button type="button" id="tts-toggle" class="mic-button" title="Toggle voice">🔊</button>
@@ -200,13 +202,13 @@
       scrollToBottom();
 
       // Fetch bot reply
-      fetch("{% url 'ask_bot' project.id %}", {
+         fetch("{% url 'ask_bot_by_key' %}", {
         method: 'POST',
         headers: {
           'X-CSRFToken': '{{ csrf_token }}',
           'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: new URLSearchParams({ question: message })
+        body: new URLSearchParams({ question: message, key: '{{ request.GET.key }}' })
       })
       .then(res => res.json())
       .then(data => {
@@ -415,3 +417,4 @@
   </script>
 </body>
 </html>
+
