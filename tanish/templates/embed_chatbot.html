@@ -413,8 +413,9 @@
     function getSelectedVoice() { try { if (!('speechSynthesis' in window)) return null; const voices = window.speechSynthesis.getVoices(); const idx = parseInt(voiceSelect.value || '0'); return voices[idx] || null; } catch(e){ return null; } }
     if (ttsToggle) { ttsToggle.addEventListener('click', () => setTtsOn(!isTtsOn())); setTtsOn(isTtsOn()); }
     if ('speechSynthesis' in window) { populateVoices(); window.speechSynthesis.onvoiceschanged = populateVoices; }
-    });
+    
   </script>
 </body>
 </html>
+
 
