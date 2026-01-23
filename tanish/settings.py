@@ -33,7 +33,7 @@ env = environ.Env()
 environ.Env.read_env()
 
 ALLOWED_HOSTS = ["*"]
-DEBUG = False  # already set
+DEBUG = True  # already set
 
 if DEBUG:
     STORAGES = {
@@ -250,6 +250,7 @@ CACHES = {
 }
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
 
 
 
