@@ -1,43 +1,73 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset
-      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
-
-
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!--  created with Free Online Sitemap Generator www.xml-sitemaps.com  -->
 <url>
-  <loc>https://www.aisearchlibrary.in/</loc>
-  <lastmod>2025-07-27T06:02:05+00:00</lastmod>
-  <priority>1.00</priority>
+<loc>https://zerocodebots.onrender.com/</loc>
+<lastmod>2026-01-23T07:20:39+00:00</lastmod>
+<priority>1.00</priority>
 </url>
 <url>
-  <loc>https://www.aisearchlibrary.in/features/</loc>
-  <lastmod>2025-07-27T06:02:05+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://zerocodebots.onrender.com/features/</loc>
+<lastmod>2026-01-23T07:20:39+00:00</lastmod>
+<priority>0.80</priority>
 </url>
 <url>
-  <loc>https://www.aisearchlibrary.in/services/</loc>
-  <lastmod>2025-07-27T06:02:05+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://zerocodebots.onrender.com/about/</loc>
+<lastmod>2026-01-23T07:20:39+00:00</lastmod>
+<priority>0.80</priority>
 </url>
 <url>
-  <loc>https://www.aisearchlibrary.in/login/</loc>
-  <lastmod>2025-07-27T06:02:05+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://zerocodebots.onrender.com/contact/</loc>
+<lastmod>2026-01-23T07:20:39+00:00</lastmod>
+<priority>0.80</priority>
 </url>
 <url>
-  <loc>https://www.aisearchlibrary.in/signup/</loc>
-  <lastmod>2025-07-27T06:02:05+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://zerocodebots.onrender.com/blog/</loc>
+<lastmod>2026-01-23T07:20:39+00:00</lastmod>
+<priority>0.80</priority>
 </url>
-
 <url>
-  <loc>https://www.aisearchlibrary.in/forgot/</loc>
-  <lastmod>2025-07-27T06:02:05+00:00</lastmod>
-  <priority>0.64</priority>
+<loc>https://zerocodebots.onrender.com/signup/</loc>
+<lastmod>2026-01-23T07:20:39+00:00</lastmod>
+<priority>0.80</priority>
 </url>
-
-
+<url>
+<loc>https://zerocodebots.onrender.com/dashboard</loc>
+<lastmod>2026-01-23T07:20:39+00:00</lastmod>
+<priority>0.80</priority>
+</url>
+<url>
+<loc>https://zerocodebots.onrender.com/privacy-policy/</loc>
+<lastmod>2026-01-23T07:20:39+00:00</lastmod>
+<priority>0.80</priority>
+</url>
+<url>
+<loc>https://zerocodebots.onrender.com/terms-of-service/</loc>
+<lastmod>2026-01-23T07:20:39+00:00</lastmod>
+<priority>0.80</priority>
+</url>
+<url>
+<loc>https://zerocodebots.onrender.com/blog/best-codeless-chatbot-integration-platforms-for-website-automation/</loc>
+<lastmod>2026-01-23T07:20:39+00:00</lastmod>
+<priority>0.64</priority>
+</url>
+<url>
+<loc>https://zerocodebots.onrender.com/blog/5-best-codeless-chatbot-integration-platforms-for-website-automation/</loc>
+<lastmod>2026-01-23T07:20:39+00:00</lastmod>
+<priority>0.64</priority>
+</url>
+<url>
+<loc>https://zerocodebots.onrender.com/blog/codeless-chatbot-integration-platform-build-ai-chatbots-without-writing-a-single-line-of-code/</loc>
+<lastmod>2026-01-23T07:20:39+00:00</lastmod>
+<priority>0.64</priority>
+</url>
+<url>
+<loc>https://zerocodebots.onrender.com/login/</loc>
+<lastmod>2026-01-23T07:20:39+00:00</lastmod>
+<priority>0.64</priority>
+</url>
+<url>
+<loc>https://zerocodebots.onrender.com/forgot/</loc>
+<lastmod>2026-01-23T07:20:39+00:00</lastmod>
+<priority>0.51</priority>
+</url>
 </urlset>
