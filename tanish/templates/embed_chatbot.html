@@ -2,124 +2,204 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Chatbot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Assistant</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f0f2f5;
+    :root {
+      --primary-color: #4f46e5;
+      --primary-dark: #4338ca;
+      --primary-light: #818cf8;
+      --secondary-color: #06b6d4;
+      --user-color: #4f46e5;
+      --bot-color: #f3f4f6;
+      --text-color: #1f2937;
+      --text-light: #6b7280;
+      --border-color: #e5e7eb;
+      --success-color: #10b981;
+      --danger-color: #ef4444;
+      --warning-color: #f59e0b;
+      --bg-color: #f9fafb;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --card-hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
 
-    .chat-container {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      padding: 1rem;
+    * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
 
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: var(--text-color);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-header {
+      background: white;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+    }
+
+    .app-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .app-title i {
+      color: var(--primary-color);
+      font-size: 1.5rem;
+    }
+
+    .app-title h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-light);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--success-color);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1rem;
+      gap: 1rem;
+    }
+
     .chat-box {
-      flex-grow: 1;
+      flex: 1;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 1rem;
+      backdrop-filter: blur(10px);
+      box-shadow: var(--card-shadow);
       scroll-behavior: smooth;
-      padding-bottom: 1rem;
     }
 
-    .chat-bubble {
-      margin: 0.5rem;
-      padding: 0.75rem 1rem;
-      border-radius: 18px;
-      max-width: 75%;
-      position: relative;
-      line-height: 1.5;
+    .message-container {
+      display: flex;
+      gap: 0.75rem;
       animation: fadeIn 0.3s ease-in-out;
     }
 
-    .user {
-      background: #007bff;
-      color: white;
-      align-self: flex-end;
-      border-bottom-right-radius: 2px;
-    }
-
-    .bot {
-      background: #e4e4e4;
-      color: #111;
-      align-self: flex-start;
-      border-bottom-left-radius: 2px;
-    }
-
-    form {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 1rem;
-      align-items: center;
-    }
-
-    input[type="text"] {
-      flex: 1;
-      padding: 0.75rem;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-
-    button {
-      padding: 0.75rem 1.25rem;
-      background: #007bff;
-      border: none;
-      color: white;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .mic-button {
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0.6rem 0.8rem;
-      background: #f1f1f1;
-      color: #333;
-      border-radius: 50%;
-      border: 1px solid #ccc;
-      cursor: pointer;
-      font-size: 1.2rem;
+      font-weight: bold;
+      flex-shrink: 0;
     }
 
-    .mic-button.active {
-      background: #ff4d4f;
-      color: #fff;
-      border-color: #ff4d4f;
+    .user-avatar {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .bot-avatar {
+      background: var(--secondary-color);
+      color: white;
+    }
+
+    .message-content {
+      flex: 1;
+      max-width: 80%;
+    }
+
+    .chat-bubble {
+      padding: 0.75rem 1rem;
+      border-radius: 1rem;
+      line-height: 1.5;
+      position: relative;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .user {
+      background: var(--user-color);
+      color: white;
+      border-bottom-right-radius: 0.25rem;
+    }
+
+    .bot {
+      background: var(--bot-color);
+      color: var(--text-color);
+      border-bottom-left-radius: 0.25rem;
+    }
+
+    .message-time {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      margin-top: 0.25rem;
+      text-align: right;
+    }
+
+    .bot .message-time {
+      text-align: left;
     }
 
     .typing {
-      width: 50px;
       display: flex;
-      justify-content: space-between;
-      margin: 0.5rem;
-      align-self: flex-start;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.75rem 1rem;
+      background: var(--bot-color);
+      border-radius: 1rem;
+      width: fit-content;
+      border-bottom-left-radius: 0.25rem;
     }
 
-    .typing span {
+    .typing-dot {
       width: 8px;
       height: 8px;
-      background-color: #aaa;
       border-radius: 50%;
+      background-color: var(--text-light);
       animation: blink 1.4s infinite;
     }
 
-    .typing span:nth-child(2) {
+    .typing-dot:nth-child(2) {
       animation-delay: 0.2s;
     }
 
-    .typing span:nth-child(3) {
+    .typing-dot:nth-child(3) {
       animation-delay: 0.4s;
     }
 
@@ -127,36 +207,358 @@
       0%, 80%, 100% { opacity: 0.3; }
       40% { opacity: 1; }
     }
-    .mcq-list { margin: 0.5rem 0 0.5rem 0; display:flex; flex-direction:column; gap:0.5rem }
-    .mcq-option { padding:0.6rem; border-radius:8px; background:linear-gradient(180deg,#ffffff,#fbfdff); border:1px solid #e3e8ee; cursor:pointer; box-shadow:0 1px 0 rgba(16,24,40,0.02) }
-    .mcq-option:hover { background:#f6f8fa; transform:translateY(-1px); transition:all .12s }
-    .confidence-badge { font-size:0.8rem; color:#0f172a; background:#eef2ff; padding:0.2rem 0.5rem; border-radius:6px; margin-left:0.5rem }
-    .feedback-row { margin-top:0.6rem; display:flex; gap:0.5rem; align-items:center }
-    .feedback-row input[type="number"] { width:64px; padding:0.4rem }
-    .clarify-list { margin-top:0.5rem; display:flex; flex-direction:column; gap:0.4rem }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .input-container {
+      background: white;
+      border-radius: 1rem;
+      padding: 1rem;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      background: var(--bg-color);
+      border-radius: 2rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border-color);
+      transition: all 0.2s;
+    }
+
+    .input-wrapper:focus-within {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    #chat-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 1rem;
+      color: var(--text-color);
+    }
+
+    .control-button {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-light);
+      transition: all 0.2s;
+    }
+
+    .control-button:hover {
+      background: var(--bg-color);
+      color: var(--primary-color);
+    }
+
+    .control-button.active {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .send-button {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary-color);
+      border: none;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .send-button:hover {
+      background: var(--primary-dark);
+      transform: scale(1.05);
+    }
+
+    .send-button:active {
+      transform: scale(0.95);
+    }
+
+    .mcq-list {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .mcq-option {
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      background: white;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .mcq-option:hover {
+      background: var(--bg-color);
+      transform: translateX(4px);
+      border-color: var(--primary-light);
+    }
+
+    .mcq-option i {
+      color: var(--primary-color);
+    }
+
+    .confidence-badge {
+      font-size: 0.75rem;
+      color: var(--text-color);
+      background: var(--bg-color);
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.5rem;
+      margin-top: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .confidence-badge i {
+      font-size: 0.75rem;
+    }
+
+    .confidence-high {
+      color: var(--success-color);
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .confidence-medium {
+      color: var(--warning-color);
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    .confidence-low {
+      color: var(--danger-color);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .feedback-container {
+      margin-top: 0.75rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .feedback-button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .feedback-button:hover {
+      background: var(--bg-color);
+      transform: scale(1.05);
+    }
+
+    .feedback-button.positive:hover {
+      color: var(--success-color);
+      border-color: var(--success-color);
+    }
+
+    .feedback-button.negative:hover {
+      color: var(--danger-color);
+      border-color: var(--danger-color);
+    }
+
+    .feedback-form {
+      display: none;
+      margin-top: 0.5rem;
+      padding: 0.75rem;
+      background: var(--bg-color);
+      border-radius: 0.5rem;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .feedback-form.active {
+      display: flex;
+    }
+
+    .feedback-form input {
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.25rem;
+      font-size: 0.875rem;
+    }
+
+    .feedback-form input[type="number"] {
+      width: 60px;
+    }
+
+    .feedback-form input[type="text"] {
+      flex: 1;
+    }
+
+    .feedback-form button {
+      padding: 0.5rem 0.75rem;
+      background: var(--primary-color);
+      border: none;
+      color: white;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+
+    .feedback-form button:hover {
+      background: var(--primary-dark);
+    }
+
+    .clarify-list {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .clarify-option {
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+      background: white;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.875rem;
+    }
+
+    .clarify-option:hover {
+      background: var(--bg-color);
+      border-color: var(--primary-light);
+      transform: translateX(4px);
+    }
+
+    .image-container {
+      margin-top: 0.75rem;
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+
+    .image-container img {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .image-container img:hover {
+      transform: scale(1.02);
+    }
+
+    .image-caption {
+      padding: 0.5rem;
+      background: var(--bg-color);
+      font-size: 0.875rem;
+      color: var(--text-light);
+    }
+
+    .voice-select {
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      background: white;
+      font-size: 0.875rem;
+      color: var(--text-color);
+    }
+
+    @media (max-width: 768px) {
+      .chat-container {
+        padding: 0.5rem;
+      }
+
+      .chat-box {
+        padding: 0.75rem;
+      }
+
+      .message-content {
+        max-width: 90%;
+      }
+
+      .app-header {
+        padding: 0.75rem 1rem;
+      }
+
+      .app-title h1 {
+        font-size: 1.25rem;
+      }
+
+      .status-indicator {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
+  <header class="app-header">
+    <div class="app-title">
+      <i class="fas fa-robot"></i>
+      <h1>AI Assistant</h1>
+    </div>
+    <div class="status-indicator">
+      <div class="status-dot"></div>
+      <span>Online</span>
+    </div>
+  </header>
+
   <div class="chat-container">
     <div class="chat-box" id="chat-box"></div>
-    <form id="chat-form" onsubmit="return false;">
-      {% csrf_token %}
-            <input type="hidden" name="key" value="{{ request.GET.key }}">
-      <input id="chat-input" placeholder="Ask a question..." required>
+    
+    <div class="input-container">
+      <div class="input-wrapper">
+        <input id="chat-input" placeholder="Ask a question..." autocomplete="off">
+      </div>
       
       {% if project.voice_enabled %}
-      <button type="button" id="mic-button" class="mic-button" title="Speak your question">🎤</button>
-      <button type="button" id="tts-toggle" class="mic-button" title="Toggle voice">🔊</button>
-      <select id="voice-select" style="display:none;margin-left:0.5rem;padding:0.4rem;border-radius:6px;border:1px solid #ccc"></select>
+      <button id="mic-button" class="control-button" title="Speak your question">
+        <i class="fas fa-microphone"></i>
+      </button>
+      <button id="tts-toggle" class="control-button" title="Toggle voice">
+        <i class="fas fa-volume-up"></i>
+      </button>
+      <select id="voice-select" class="voice-select" style="display:none;"></select>
       {% endif %}
-      <button type="submit">Send</button>
-    </form>
+      
+      <button id="send-button" class="send-button" title="Send message">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
   </div>
 
   <script>
     const chatForm = document.getElementById('chat-form');
     const chatInput = document.getElementById('chat-input');
     const chatBox = document.getElementById('chat-box');
+    const sendButton = document.getElementById('send-button');
     const micButton = document.getElementById('mic-button');
     const ttsToggle = document.getElementById('tts-toggle');
     const voiceSelect = document.getElementById('voice-select');
@@ -167,14 +569,66 @@
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    function createTypingDots() {
-      const dots = document.createElement('div');
-      dots.className = 'typing';
-      dots.innerHTML = '<span></span><span></span><span></span>';
-      return dots;
+    function createTypingIndicator() {
+      const typingContainer = document.createElement('div');
+      typingContainer.className = 'message-container';
+      
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar bot-avatar';
+      avatar.innerHTML = '<i class="fas fa-robot"></i>';
+      
+      const content = document.createElement('div');
+      content.className = 'message-content';
+      
+      const typing = document.createElement('div');
+      typing.className = 'typing';
+      typing.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+      
+      content.appendChild(typing);
+      typingContainer.appendChild(avatar);
+      typingContainer.appendChild(content);
+      
+      return typingContainer;
+    }
+
+    function addMessage(content, isUser = false, options = {}) {
+      const messageContainer = document.createElement('div');
+      messageContainer.className = 'message-container';
+      
+      const avatar = document.createElement('div');
+      avatar.className = isUser ? 'avatar user-avatar' : 'avatar bot-avatar';
+      avatar.innerHTML = isUser ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+      
+      const messageContent = document.createElement('div');
+      messageContent.className = 'message-content';
+      
+      const bubble = document.createElement('div');
+      bubble.className = isUser ? 'chat-bubble user' : 'chat-bubble bot';
+      
+      if (options.typing) {
+        typeText(bubble, content, 20);
+      } else {
+        bubble.textContent = content;
+      }
+      
+      const time = document.createElement('div');
+      time.className = 'message-time';
+      time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      messageContent.appendChild(bubble);
+      messageContent.appendChild(time);
+      
+      messageContainer.appendChild(avatar);
+      messageContainer.appendChild(messageContent);
+      
+      chatBox.appendChild(messageContainer);
+      scrollToBottom();
+      
+      return messageContainer;
     }
 
     function typeText(element, text, speed = 20) {
+      element.textContent = '';
       let index = 0;
       const interval = setInterval(() => {
         element.textContent += text[index++];
@@ -183,26 +637,22 @@
       }, speed);
     }
 
-    chatForm.addEventListener('submit', function (e) {
-      e.preventDefault();
+    // Send message function
+    function sendMessage() {
       const message = chatInput.value.trim();
       if (!message) return;
 
       // Add user message
-      const userBubble = document.createElement('div');
-      userBubble.className = 'chat-bubble user';
-      userBubble.textContent = message;
-      chatBox.appendChild(userBubble);
-      scrollToBottom();
+      addMessage(message, true);
       chatInput.value = '';
 
-      // Add typing dots for bot
-      const typingDots = createTypingDots();
-      chatBox.appendChild(typingDots);
+      // Add typing indicator
+      const typingIndicator = createTypingIndicator();
+      chatBox.appendChild(typingIndicator);
       scrollToBottom();
 
       // Fetch bot reply
-         fetch("{% url 'ask_bot_by_key' %}", {
+      fetch("{% url 'ask_bot_by_key' %}", {
         method: 'POST',
         headers: {
           'X-CSRFToken': '{{ csrf_token }}',
@@ -212,133 +662,205 @@
       })
       .then(res => res.json())
       .then(data => {
-        // Remove typing dots
-        chatBox.removeChild(typingDots);
+        // Remove typing indicator
+        chatBox.removeChild(typingIndicator);
 
-        // Add bot bubble with typing animation
-        const botBubble = document.createElement('div');
-        botBubble.className = 'chat-bubble bot';
-        chatBox.appendChild(botBubble);
-        // main
-        const mainText = document.createElement('div');
-        typeText(mainText, data.answer);
-        botBubble.appendChild(mainText);
+        // Add bot message
+        const botMessage = addMessage(data.answer, false, { typing: true });
+        const botBubble = botMessage.querySelector('.chat-bubble');
 
         // Image returned from QA (if any)
         if (data.image && data.image.url) {
           try {
-            const imgWrap = document.createElement('div');
-            imgWrap.style.marginTop = '0.5rem';
+            const imgContainer = document.createElement('div');
+            imgContainer.className = 'image-container';
+            
             const img = document.createElement('img');
             img.src = data.image.url;
             img.alt = data.image.description || 'Answer image';
-            img.style.maxWidth = '100%';
-            img.style.borderRadius = '8px';
-            img.style.display = 'block';
-            img.style.cursor = 'pointer';
             img.addEventListener('click', () => window.open(data.image.url, '_blank'));
-            imgWrap.appendChild(img);
+            
+            imgContainer.appendChild(img);
+            
             if (data.image.description) {
-              const cap = document.createElement('div');
-              cap.style.fontSize = '0.85rem';
-              cap.style.color = '#6b7280';
-              cap.style.marginTop = '0.35rem';
-              cap.textContent = data.image.description;
-              imgWrap.appendChild(cap);
+              const caption = document.createElement('div');
+              caption.className = 'image-caption';
+              caption.textContent = data.image.description;
+              imgContainer.appendChild(caption);
             }
-            botBubble.appendChild(imgWrap);
+            
+            botBubble.appendChild(imgContainer);
           } catch (e) { console.warn('Failed to render image', e); }
         }
-        // confidence
+
+        // Confidence badge
         if (data.confidence !== undefined && data.confidence !== null) {
-          const c = document.createElement('span');
-          c.className = 'confidence-badge';
-          c.textContent = 'Confidence: ' + (Math.round(data.confidence * 100) / 100);
-          botBubble.appendChild(c);
+          const confidence = document.createElement('div');
+          confidence.className = 'confidence-badge';
+          
+          let confidenceLevel = 'high';
+          let icon = 'fa-check-circle';
+          
+          if (data.confidence < 0.6) {
+            confidenceLevel = 'low';
+            icon = 'fa-exclamation-circle';
+          } else if (data.confidence < 0.8) {
+            confidenceLevel = 'medium';
+            icon = 'fa-question-circle';
+          }
+          
+          confidence.classList.add(`confidence-${confidenceLevel}`);
+          confidence.innerHTML = `<i class="fas ${icon}"></i> Confidence: ${(Math.round(data.confidence * 100) / 100)}`;
+          
+          botBubble.appendChild(confidence);
         }
 
-        // MCQ
+        // MCQ options
         if (data.mcq && Array.isArray(data.mcq) && data.mcq.length) {
-          const list = document.createElement('div');
-          list.className = 'mcq-list';
+          const mcqList = document.createElement('div');
+          mcqList.className = 'mcq-list';
+          
           data.mcq.forEach(opt => {
-            const item = document.createElement('div');
-            item.className = 'mcq-option';
-            item.textContent = opt.label || opt.text || String(opt);
-            item.addEventListener('click', () => {
+            const option = document.createElement('div');
+            option.className = 'mcq-option';
+            option.innerHTML = `<i class="fas fa-circle"></i> ${opt.label || opt.text || String(opt)}`;
+            
+            option.addEventListener('click', () => {
               fetch("{% url 'submit_feedback' project.id %}", {
                 method: 'POST',
                 headers: {
                   'X-CSRFToken': '{{ csrf_token }}',
                   'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: new URLSearchParams({ selected_option: item.textContent, question: message, response: data.answer })
+                body: new URLSearchParams({ 
+                  selected_option: option.textContent.trim(), 
+                  question: message, 
+                  response: data.answer 
+                })
               }).catch(()=>{});
-              chatInput.value = item.textContent;
-              chatForm.dispatchEvent(new Event('submit'));
+              
+              chatInput.value = opt.label || opt.text || String(opt);
+              sendMessage();
             });
-            list.appendChild(item);
+            
+            mcqList.appendChild(option);
           });
-          botBubble.appendChild(list);
+          
+          botBubble.appendChild(mcqList);
         }
 
         // Clarify options
         if (data.clarify && Array.isArray(data.clarify)) {
-          const clarify = document.createElement('div');
-          clarify.className = 'clarify-list';
+          const clarifyList = document.createElement('div');
+          clarifyList.className = 'clarify-list';
+          
           data.clarify.forEach(copt => {
-            const btn = document.createElement('div');
-            btn.className = 'mcq-option';
-            btn.textContent = copt;
-            btn.addEventListener('click', () => {
+            const option = document.createElement('div');
+            option.className = 'clarify-option';
+            option.textContent = copt;
+            
+            option.addEventListener('click', () => {
               chatInput.value = copt;
-              chatForm.dispatchEvent(new Event('submit'));
+              sendMessage();
             });
-            clarify.appendChild(btn);
+            
+            clarifyList.appendChild(option);
           });
-          botBubble.appendChild(clarify);
+          
+          botBubble.appendChild(clarifyList);
         }
 
-        // feedback UI: subtle thumbs, expand form only on thumbs-down or low confidence
-        const feedbackControls = document.createElement('div');
-        feedbackControls.style.display = 'flex';
-        feedbackControls.style.gap = '0.5rem';
-        feedbackControls.style.alignItems = 'center';
-
-        const thumbsUp = document.createElement('button'); thumbsUp.type='button'; thumbsUp.textContent='👍'; thumbsUp.title='Helpful';
-        const thumbsDown = document.createElement('button'); thumbsDown.type='button'; thumbsDown.textContent='👎'; thumbsDown.title='Not helpful';
-        feedbackControls.appendChild(thumbsUp); feedbackControls.appendChild(thumbsDown);
-
-        const fullForm = document.createElement('div'); fullForm.style.display='none'; fullForm.className='feedback-row';
-        const rating = document.createElement('input'); rating.type='number'; rating.min=1; rating.max=5; rating.placeholder='1-5';
-        const comment = document.createElement('input'); comment.type='text'; comment.placeholder='Comment (optional)';
-        const sendFb = document.createElement('button'); sendFb.type='button'; sendFb.textContent='Send Feedback';
-        fullForm.appendChild(rating); fullForm.appendChild(comment); fullForm.appendChild(sendFb);
-        feedbackControls.appendChild(fullForm);
-
+        // Feedback UI
+        const feedbackContainer = document.createElement('div');
+        feedbackContainer.className = 'feedback-container';
+        
+        const thumbsUp = document.createElement('button');
+        thumbsUp.className = 'feedback-button positive';
+        thumbsUp.innerHTML = '<i class="fas fa-thumbs-up"></i>';
+        thumbsUp.title = 'Helpful';
+        
+        const thumbsDown = document.createElement('button');
+        thumbsDown.className = 'feedback-button negative';
+        thumbsDown.innerHTML = '<i class="fas fa-thumbs-down"></i>';
+        thumbsDown.title = 'Not helpful';
+        
+        feedbackContainer.appendChild(thumbsUp);
+        feedbackContainer.appendChild(thumbsDown);
+        
+        const feedbackForm = document.createElement('div');
+        feedbackForm.className = 'feedback-form';
+        
+        const rating = document.createElement('input');
+        rating.type = 'number';
+        rating.min = 1;
+        rating.max = 5;
+        rating.placeholder = '1-5';
+        
+        const comment = document.createElement('input');
+        comment.type = 'text';
+        comment.placeholder = 'Comment (optional)';
+        
+        const sendFeedback = document.createElement('button');
+        sendFeedback.textContent = 'Send';
+        
+        feedbackForm.appendChild(rating);
+        feedbackForm.appendChild(comment);
+        feedbackForm.appendChild(sendFeedback);
+        
+        feedbackContainer.appendChild(feedbackForm);
+        
         function postFeedback(payload) {
           try {
             if (data.bot_response_id) payload.bot_response_id = data.bot_response_id;
             fetch("{% url 'submit_feedback' project.id %}", {
-              method: 'POST', headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded' },
+              method: 'POST', 
+              headers: { 
+                'X-CSRFToken': '{{ csrf_token }}', 
+                'Content-Type': 'application/x-www-form-urlencoded' 
+              },
               body: new URLSearchParams(payload)
             }).catch(()=>{});
           } catch(e){}
         }
 
-        thumbsUp.addEventListener('click', () => { postFeedback({ selected_option:'thumbs_up', question: message, response: data.answer }); thumbsUp.disabled=true; thumbsUp.textContent='Thanks 👍'; });
-        thumbsDown.addEventListener('click', () => {
-          postFeedback({ selected_option: 'thumbs_down', question: message, response: data.answer });
-          thumbsDown.disabled = true; thumbsDown.textContent = 'Thanks 👎';
-          const addComment = document.createElement('button'); addComment.type='button'; addComment.textContent='Add comment'; addComment.style.marginLeft='0.4rem';
-          addComment.addEventListener('click', () => { fullForm.style.display='flex'; addComment.disabled=true; });
-          feedbackControls.appendChild(addComment);
+        thumbsUp.addEventListener('click', () => { 
+          postFeedback({ 
+            selected_option:'thumbs_up', 
+            question: message, 
+            response: data.answer 
+          }); 
+          thumbsUp.disabled = true;
+          thumbsUp.innerHTML = '<i class="fas fa-check"></i>';
         });
-        sendFb.addEventListener('click', () => { postFeedback({ rating: rating.value, comment: comment.value, question: message, response: data.answer }); sendFb.textContent='Thanks'; sendFb.disabled=true; });
+        
+        thumbsDown.addEventListener('click', () => {
+          postFeedback({ 
+            selected_option: 'thumbs_down', 
+            question: message, 
+            response: data.answer 
+          });
+          thumbsDown.disabled = true;
+          thumbsDown.innerHTML = '<i class="fas fa-check"></i>';
+          feedbackForm.classList.add('active');
+        });
+        
+        sendFeedback.addEventListener('click', () => { 
+          postFeedback({ 
+            rating: rating.value, 
+            comment: comment.value, 
+            question: message, 
+            response: data.answer 
+          }); 
+          sendFeedback.textContent = 'Thanks';
+          sendFeedback.disabled = true;
+        });
+        
+        botBubble.appendChild(feedbackContainer);
 
-        botBubble.appendChild(feedbackControls);
-
-        if (data.confidence !== undefined && data.confidence !== null && Number(data.confidence) < 0.6) { fullForm.style.display='flex'; }
+        // Show feedback form if confidence is low
+        if (data.confidence !== undefined && data.confidence !== null && Number(data.confidence) < 0.6) { 
+          feedbackForm.classList.add('active');
+        }
 
         // Optional: speak the bot's response using browser TTS
         if (voiceEnabled && 'speechSynthesis' in window && isTtsOn()) {
@@ -352,16 +874,21 @@
       })
       .catch(err => {
         console.error("Chat error:", err);
-        chatBox.removeChild(typingDots);
-        const errorBubble = document.createElement('div');
-        errorBubble.className = 'chat-bubble bot';
-        errorBubble.textContent = "Something went wrong. Please try again.";
-        chatBox.appendChild(errorBubble);
-        scrollToBottom();
+        chatBox.removeChild(typingIndicator);
+        addMessage("Something went wrong. Please try again.", false);
       });
+    }
+
+    // Event listeners
+    sendButton.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
     });
 
-    // Optional voice input using Web Speech API (client-side STT)
+    // Voice input using Web Speech API
     if (voiceEnabled && micButton) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
@@ -396,7 +923,7 @@
           const transcript = event.results[0][0].transcript;
           if (transcript) {
             chatInput.value = transcript;
-            chatForm.dispatchEvent(new Event('submit'));
+            sendMessage();
           }
         });
 
@@ -407,15 +934,60 @@
     }
 
     // TTS toggle and voice selection
-    function isTtsOn() { try { return localStorage.getItem('zerocodebots_tts') !== 'off'; } catch(e){ return true; } }
-    function setTtsOn(on) { try { localStorage.setItem('zerocodebots_tts', on ? 'on' : 'off'); } catch(e){} if (ttsToggle) ttsToggle.textContent = on ? '🔊' : '🔈'; }
-    function populateVoices() { if (!('speechSynthesis' in window)) return; const voices = window.speechSynthesis.getVoices(); if (!voices || !voices.length) return; if (voices.length > 1 && voiceSelect) voiceSelect.style.display = ''; voiceSelect.innerHTML=''; voices.forEach((v, idx) => { const opt=document.createElement('option'); opt.value=idx; opt.textContent=`${v.name} (${v.lang})`; voiceSelect.appendChild(opt); }); }
-    function getSelectedVoice() { try { if (!('speechSynthesis' in window)) return null; const voices = window.speechSynthesis.getVoices(); const idx = parseInt(voiceSelect.value || '0'); return voices[idx] || null; } catch(e){ return null; } }
-    if (ttsToggle) { ttsToggle.addEventListener('click', () => setTtsOn(!isTtsOn())); setTtsOn(isTtsOn()); }
-    if ('speechSynthesis' in window) { populateVoices(); window.speechSynthesis.onvoiceschanged = populateVoices; }
+    function isTtsOn() { 
+      try { 
+        return localStorage.getItem('zerocodebots_tts') !== 'off'; 
+      } catch(e){ 
+        return true; 
+      } 
+    }
     
+    function setTtsOn(on) { 
+      try { 
+        localStorage.setItem('zerocodebots_tts', on ? 'on' : 'off'); 
+      } catch(e){} 
+      if (ttsToggle) ttsToggle.innerHTML = on ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+    }
+    
+    function populateVoices() { 
+      if (!('speechSynthesis' in window)) return; 
+      const voices = window.speechSynthesis.getVoices(); 
+      if (!voices || !voices.length) return; 
+      if (voices.length > 1 && voiceSelect) voiceSelect.style.display = ''; 
+      voiceSelect.innerHTML=''; 
+      voices.forEach((v, idx) => { 
+        const opt=document.createElement('option'); 
+        opt.value=idx; 
+        opt.textContent=`${v.name} (${v.lang})`; 
+        voiceSelect.appendChild(opt); 
+      }); 
+    }
+    
+    function getSelectedVoice() { 
+      try { 
+        if (!('speechSynthesis' in window)) return null; 
+        const voices = window.speechSynthesis.getVoices(); 
+        const idx = parseInt(voiceSelect.value || '0'); 
+        return voices[idx] || null; 
+      } catch(e){ 
+        return null; 
+      } 
+    }
+    
+    if (ttsToggle) { 
+      ttsToggle.addEventListener('click', () => setTtsOn(!isTtsOn())); 
+      setTtsOn(isTtsOn()); 
+    }
+    
+    if ('speechSynthesis' in window) { 
+      populateVoices(); 
+      window.speechSynthesis.onvoiceschanged = populateVoices; 
+    }
+
+    // Initial welcome message
+    window.addEventListener('load', () => {
+      addMessage("Hello! I'm your AI assistant. How can I help you today?", false);
+    });
   </script>
 </body>
 </html>
-
-
