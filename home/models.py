@@ -5,7 +5,7 @@ from django.db import models
 from django.db import models
 from django.contrib.auth.models import User
 import secrets
-
+import string
 
 def generate_bot_key():
     return ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(32))
