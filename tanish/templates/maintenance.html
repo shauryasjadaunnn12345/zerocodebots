@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Working on It</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body{
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background: linear-gradient(135deg, #0f172a, #1e3a8a, #2563eb);
+            overflow:hidden;
+            color:white;
+        }
+
+        .container{
+            text-align:center;
+            padding:50px 40px;
+            width:90%;
+            max-width:600px;
+            background: rgba(255,255,255,0.08);
+            border:1px solid rgba(255,255,255,0.2);
+            border-radius:25px;
+            backdrop-filter: blur(12px);
+            box-shadow:0 8px 32px rgba(0,0,0,0.3);
+            animation:fadeIn 1s ease;
+        }
+
+        .icon{
+            font-size:80px;
+            margin-bottom:20px;
+            animation:bounce 2s infinite;
+        }
+
+        h1{
+            font-size:42px;
+            margin-bottom:15px;
+            font-weight:700;
+        }
+
+        p{
+            font-size:18px;
+            color:#dbeafe;
+            margin-bottom:30px;
+            line-height:1.6;
+        }
+
+        .loader{
+            width:70px;
+            height:70px;
+            border:6px solid rgba(255,255,255,0.2);
+            border-top:6px solid #ffffff;
+            border-radius:50%;
+            margin:0 auto;
+            animation:spin 1s linear infinite;
+        }
+
+        .footer{
+            margin-top:30px;
+            font-size:14px;
+            color:#bfdbfe;
+        }
+
+        @keyframes spin{
+            100%{
+                transform:rotate(360deg);
+            }
+        }
+
+        @keyframes bounce{
+            0%,100%{
+                transform:translateY(0);
+            }
+            50%{
+                transform:translateY(-10px);
+            }
+        }
+
+        @keyframes fadeIn{
+            from{
+                opacity:0;
+                transform:translateY(20px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+
+        /* Floating circles background */
+        .circle{
+            position:absolute;
+            border-radius:50%;
+            background:rgba(255,255,255,0.08);
+            animation:float 10s linear infinite;
+        }
+
+        .circle:nth-child(1){
+            width:120px;
+            height:120px;
+            top:10%;
+            left:15%;
+        }
+
+        .circle:nth-child(2){
+            width:180px;
+            height:180px;
+            bottom:15%;
+            right:10%;
+        }
+
+        .circle:nth-child(3){
+            width:80px;
+            height:80px;
+            bottom:25%;
+            left:20%;
+        }
+
+        @keyframes float{
+            0%{
+                transform:translateY(0px);
+            }
+            50%{
+                transform:translateY(-25px);
+            }
+            100%{
+                transform:translateY(0px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+
+    <div class="container">
+        <div class="icon">🚧</div>
+
+        <h1>We're Working on It</h1>
+
+        <p>
+            Our team is currently improving this page to give you a better experience.
+            Please check back shortly.
+        </p>
+
+        <div class="loader"></div>
+
+        <div class="footer">
+            Thank you for your patience 💙
+        </div>
+    </div>
+
+</body>
+</html>
