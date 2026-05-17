@@ -33,7 +33,7 @@ env = environ.Env()
 environ.Env.read_env()
 
 ALLOWED_HOSTS = ["*"]
-DEBUG = True  # already set
+DEBUG = False  # already set
 
 if DEBUG:
     STORAGES = {
