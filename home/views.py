@@ -1609,5 +1609,8 @@ def terms_of_service(request):
 
     return render(request, 'terms_of_service.html')
 
+from django.shortcuts import render
 
+def custom_error(request, exception=None):
+    return render(request, "maintenance.html", status=500)
 
