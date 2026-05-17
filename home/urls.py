@@ -11,10 +11,10 @@ from .views import (
     my_blogs, my_projects, subscribe_newsletter,privacy_policy,terms_of_service
 )
 from django.conf.urls import handler404, handler500
-from . import views
+from home import views
 
-handler404 = 'yourapp.views.custom_error'
-handler500 = 'yourapp.views.custom_error'
+handler404 = 'home.views.custom_error'
+handler500 = 'home.views.custom_error'
 urlpatterns = [
     # Home & General
     path('', home, name='home'),
