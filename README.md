@@ -40,8 +40,6 @@ Built for startups, students, small businesses, agencies, and creators who want 
 
 ---
 
-# 🎯 Key Features
-
 ## 🤖 No-Code Chatbot Builder
 Create chatbot responses using simple question & answer input fields.
 
